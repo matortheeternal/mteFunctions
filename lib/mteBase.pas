@@ -45,34 +45,44 @@ var
   sl1, sl2: TStringList;
   i, c1, c2: integer;
 begin
-  Result := -10;
+  Result := -99;
 
+  // handle empty string case
+  if (v1 = '') or (v2 = '') then
+    raise Exception.Create('VersionCompare: Version is empty string');
+  
   // parse versions with . as delimiter
   sl1 := TStringList.Create;
   sl2 := TStringList.Create;
   try
-    sl1.LineBreak := '.';
-    sl1.Text := v1;
-    sl2.LineBreak := '.';
-    sl2.Text := v2;
+    sl1.Delimiter := '.';
+    sl1.StrictDelimiter := true;
+    sl1.DelimitedText := v1;
+    sl2.Delimiter := '.';
+    sl2.StrictDelimiter := true;
+    sl2.DelimitedText := v2;
     if sl1.Count <> sl2.Count then
-      raise Exception.Create('Versions have different number of clauses');
-
+      raise Exception.Create('VersionCompare: Versions have a different '+
+        'number of version clauses');
+    
     // look through each version clause and perform comparisons
     i := 0;
-    while (i < sl1.Count) and (i < sl2.Count) do begin
+    while (i < sl1.Count) do begin
       c1 := StrToInt(sl1[i]);
       c2 := StrToInt(sl2[i]);
       if (c1 < c2) then begin
         Result := sl1.Count - i;
-        break;
+        exit;
       end
       else if (c1 > c2) then begin
         Result := i - sl1.Count;
-        break;
+        exit;
       end;
-      Inc(i);
+      Inc(i);  
     end;
+    
+    // if equal, set result to 0
+    Result := 0;
   finally
     // free ram    
     sl1.Free;
@@ -80,12 +90,21 @@ begin
   end;
 end;
 
-function xEditVersionString(v: Integer): string;
+{
+  VersionToString:
+  Takes in an Integer version through parameter v, and 
+  produces a string representing it as three-clause
+  version (Major, minor, release).
+  
+  Example usage:
+  AddMessage(VersionToString($FF804020)); // 255.128.64
+}
+function VersionToString(v: Integer): string;
 begin
   Result := Format('%d.%d.%d', [
-    v shr 24,
-    v shr 16 and $FF,
-    v shr 8 and $FF
+    Integer(v shr 24),
+    Integer(v shr 16 and $FF),
+    Integer(v shr 8 and $FF)
   ]);
 end;
 
@@ -105,7 +124,7 @@ function xEditVersionCheck(minVersion: string; maxVersion: string): boolean;
 var
   xEditVersion: string;
 begin
-  xEditVersion := xEditVersionString(wbVersionNumber);
+  xEditVersion := VersionToString(wbVersionNumber);
   Result := (VersionCompare(minVersion, xEditVersion) >= 0) 
     and (VersionCompare(xEditVersion, maxVersion) >= 0);
 end;
@@ -148,10 +167,10 @@ begin
 end;
 
 {
-  mteVersionCheck:
-  Takes a target version of mteFunctions and returns an 
-  integer identifying the relationship between that 
-  version and the version the user is running. 
+  VersionCheck:
+  Takes a target version and a current verison and 
+  returns an  integer identifying the relationship 
+  between them.
   
   Returns:
   vcOlderBroken = 1: When the user is running an older
@@ -167,11 +186,11 @@ end;
     version that is a full minorVersion or majorVersion
     different from the target version.
 }
-function mteVersionCheck(targetVersion: string): Integer;
+function VersionCheck(targetVersion, currentVersion: string): Integer;
 var
   vcCurrent, vcReverse: Integer;
 begin
-  vcCurrent := VersionCompare(targetVersion, mteVersion); // + when mteVersion > targetVersion
+  vcCurrent := VersionCompare(targetVersion, currentVersion); // + when mteVersion > targetVersion
   if vcCurrent = 0 then
     // we're on the target version
     Result := vcEqual
@@ -193,6 +212,16 @@ begin
     else
       Result := vcOlder;
   end;
+end;
+
+{
+  mteVersionCheck
+  Wraps VersionCheck with mteVersion as the
+  currentVersion argument.
+}
+function mteVersionCheck(targetVersion: string): Integer;
+begin
+  Result := VersionCheck(targetVersion, mteVersion);
 end;
 
 end.
