@@ -7,7 +7,7 @@
 
 unit mteFiles;
   
-uses 'lib\mteBase';
+uses 'lib\mteElements';
 
 const
   mteBethesdaSkyrimFiles = 'Skyrim.esm'#44'Update.esm'#44'Dawnguard.esm'#44'HearthFires.esm'#44
@@ -61,7 +61,7 @@ const
 function GetFileHeader(f: IInterface): IInterface;
 begin
   if not Assigned(f) then
-    raise Exception.Create('GetFileHeader: Input file is unassigned');
+    raise Exception.Create('GetFileHeader: Input file is not assigned');
   if ElementType(f) <> etFile then
     raise Exception.Create('GetFileHeader: Input element is not a file');
     
@@ -186,7 +186,7 @@ var
   rec: IInterface;
 begin
   if not Assigned(f) then
-    raise Exception.Create('OverrideRecordCount: Input file unassigned');
+    raise Exception.Create('OverrideRecordCount: Input file not assigned');
 
   Result := 0;
   for i := 0 to Pred(RecordCount(f)) do begin
@@ -238,6 +238,54 @@ end;
 {****************************************************}
 
 {
+  AddFileToList:
+  Adds the filename of an IwbFile to a stringlist, and its
+  load order as an object paired with the filename.
+  
+  Example usage:
+  slMasters := TStringList.Create;
+  f := FileByName('Update.esm');
+  AddPluginToList(f, slMasters);
+  AddMessage(Format('[%s] %s', 
+    [IntToHex(slMasters.Objects[0], 2), slMasters[0]])); // [01] Update.esm
+}
+procedure AddFileToList(f: IInterface; var sl: TStringList);
+var
+  filename: string;
+  i, iNewLoadOrder, iLoadOrder: Integer;
+begin
+  // raise exception if input file is not assigned
+  if not Assigned(f) then
+    raise Exception.Create('AddFileToList: Input file is not assigned');
+  // raise exception if input stringlist is not assigned
+  if not Assigned(sl) then
+    raise Exception.Create('AddFileToList: Input TStringList is not assigned');
+    
+  // don't add file to list if it is already present
+  filename := GetFileName(f);
+  if sl.IndexOf(filename) > -1 then 
+    exit;
+  
+  // loop through list to determine correct place to
+  // insert the file into it
+  iNewLoadOrder := GetLoadOrder(f);
+  for i := 0 to Pred(sl.Count) do begin
+    iLoadOrder := Integer(sl.Objects[i]);
+    // insert the file at the current position if we 
+    // reach the a file with a lower load order than it
+    if iLoadOrder > iNewLoadOrder then begin
+      sl.InsertObject(i, filename, TObject(iNewLoadOrder));
+      exit;
+    end;
+  end;
+  
+  // if the list is empty, or if all files in the list
+  // are at lower load orders than the file we're adding,
+  // we add the file to the end of the list
+  sl.AddObject(filename, TObject(iNewLoadOrder));
+end;
+
+{
   AddMastersToList:
   Adds the masters from a specific file to a specified 
   stringlist.
@@ -246,15 +294,15 @@ end;
   slMasters := TStringList.Create;
   AddMastersToList(FileByName('Dragonborn.esm'), slMasters);
 }
-procedure AddMastersToList(f: IInterface; var sl: TStringList);
+procedure AddMastersToList(f: IInterface; var sl: TStringList; sorted: boolean);
 var
-  fileHeader, masters, master: IInterface;
+  fileHeader, masters, master, masterFile: IInterface;
   i: integer;
   filename: string;
 begin
-  // throw exception if sl is not initialized
+  // raise exception if input stringlist is not assigned
   if not Assigned(sl) then
-    raise Exception.Create('AddMastersToList: Input TStringList not assigned.');
+    raise Exception.Create('AddMastersToList: Input TStringList not assigned');
 
   // add file's masters
   fileHeader := GetFileHeader(f);
@@ -263,10 +311,69 @@ begin
     for i := 0 to ElementCount(masters) - 1 do begin
       master := ElementByIndex(masters, i);
       filename := GetElementEditValues(master, 'MAST');
-      if (sl.IndexOf(filename) = -1) then 
-        sl.Add(filename);
+      masterFile := FileByName(filename);
+      if Assigned(masterFile) and sorted then 
+        AddFileToList(masterFile, sl)
+      else if sl.IndexOf(filename) = -1 then
+        sl.AddObject(filename, TObject(GetLoadOrder(masterFile)));
     end;
 end;
+
+{
+  AddMaster:
+  Adds a master to a file manually.  If the master is already
+  present, it will not be duplicated.
+  
+  Example usage:
+  f := FileByName('TestFile.esp');
+  AddMaster(f, 'Skyrim.esm');
+}
+procedure AddMaster(f, masterFile: IInterface);
+var
+  fileHeader, masters, master, temp: IInterface;
+  masterFilename: string;
+  i, iNewLoadOrder, iLoadOrder: Integer;
+  sl: TStringList;
+begin
+  // raise exception if input masterFile is not assigned
+  if not Assigned(masterFile) then
+    raise Exception.Create('AddMaster: Input master file not assigned');
+    
+  fileHeader := GetFileHeader(f);
+  masters := ElementByPath(fileHeader, 'Master Files');
+  masterFilename := GetFileName(masterFile);
+  
+  // create masters element if it doesn't exist
+  if not Assigned(masters) then begin
+    Add(fileHeader, 'Master Files', true);
+    masters := ElementByPath(fileHeader, 'Master Files');
+    master := ElementByIndex(masters, 0);
+    // set master filename
+    SetElementEditValues(master, 'MAST', masterFilename);
+  end
+  // else add a new master to the masters list
+  else begin
+    sl := TStringList.Create;
+    try
+      AddMastersToList(f, sl, true);
+      iNewLoadOrder := GetLoadOrder(masterFile);
+      for i := 0 to Pred(sl.Count) do begin
+        iLoadOrder := Integer(sl.Objects[i]);
+        if iLoadOrder > iNewLoadOrder then begin
+          master := ElementAssign(masters, HighInteger, nil, false);
+          MoveElementToIndex(master, i);
+          exit;
+        end;
+      end;
+      master := ElementAssign(masters, HighInteger, nil, false);
+    finally
+      // set master filename
+      SetElementEditValues(master, 'MAST', masterFilename);
+      sl.Free;
+    end;
+  end;
+end;
+
 
 // **** TODO: REVIEW THIS FUNCTION ****
 {
@@ -287,6 +394,10 @@ var
   filename: string;
   slCurrentMasters: TStringList;
 begin
+  // raise exception if input file is not assigned
+  if not Assigned(f) then
+    raise Exception.Create('AddMastersToFile: Input file not assigned');
+  // raise exception if input stringlist is not assigned
   if not Assigned(sl) then
     raise Exception.Create('AddMastersToFile: Input TStringList not assigned');
 
@@ -295,9 +406,10 @@ begin
   
   try
     // AddMasterIfMissing will attempt to add the masters to the file.
-    for i := 0 to Pred(sl.Count) do
+    for i := 0 to Pred(sl.Count) do begin
       if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) then
         AddMasterIfMissing(f, sl[i]);
+    end;
     
     // AddMasterIfMissing won't add the masters if they have been removed
     // in the current TES5Edit session, so a manual re-adding process is
@@ -306,20 +418,21 @@ begin
     // in the current TES5Edit session.
     fileHeader := GetFileHeader(f);
     masters := ElementByPath(fileHeader, 'Master Files');
-    if not Assigned(masters) then begin
-      Add(fileHeader, 'Master Files');
-      masters := ElementByPath(fileHeader, 'Master Files');
-    end;
-    for i := 0 to Pred(ElementCount(masters)) do begin
-      master := ElementByIndex(masters, i);
-      filename := GetElementEditValues(master, 'MAST');
-      slCurrentMasters.Add(filename);
-    end;
-    for i := 0 to Pred(sl.Count) do begin
-      if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) and (slCurrentMasters.IndexOf(sl[i]) = -1) then begin
-        master := ElementAssign(masters, HighInteger, nil, False);
-        SetElementEditValues(master, 'MAST', sl[i]);
+    // if masters is assigned, add the current masters to slCurrentMasters
+    if Assigned(masters) then
+      for i := 0 to Pred(ElementCount(masters)) do begin
+        master := ElementByIndex(masters, i);
+        filename := GetElementEditValues(master, 'MAST');
+        slCurrentMasters.Add(filename);
       end;
+    
+    // add masters to the file
+    for i := 0 to Pred(sl.Count) do begin
+      // TODO: Do this with native code instead of calling AddMaster
+      // because AddMaster rebuilds a stringlist of the file's masters 
+      // each time it is called.
+      if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) and (slCurrentMasters.IndexOf(sl[i]) = -1) then
+        AddMaster(f, FileByName(sl[i]));
     end;
   finally
     slCurrentMasters.Free;
@@ -335,19 +448,19 @@ end;
   f := FileByIndex(i);
   RemoveMaster(f, 'Update.esm');
 }
-procedure RemoveMaster(f: IInterface; filename: String);
+procedure RemoveMaster(f: IInterface; masterFilename: String);
 var
-  master, masters: IInterface;
+  fileHeader, master, masters: IInterface;
   i: integer;
-  s: string;
+  sMaster: string;
 begin
   fileHeader := GetFileHeader(f);
   masters := ElementByPath(fileHeader, 'Master Files');
   // loop through the masteres in reverse
   for i := Pred(ElementCount(masters)) downto 0 do begin
     master := ElementByIndex(masters, i);
-    s := GetElementEditValues(master, 'MAST');
-    if s = filename then begin
+    sMaster := GetElementEditValues(master, 'MAST');
+    if sMaster = masterFilename then begin
       Remove(master);
       break;
     end;
@@ -367,6 +480,10 @@ var
   slMasters: TStringList;
   targetFilename: string;
 begin
+  // raise exception if input file is not assigned
+  if not Assigned(targetFile) then
+    raise Exception.Create('AddLoadedFilesAsMasters: Input file not assigned');
+
   // create stringlist
   slMasters := TStringList.Create;
   try
