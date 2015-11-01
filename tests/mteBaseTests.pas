@@ -12,9 +12,9 @@ const
 
 {
   mteVersionTest:
-  Raises an exception if you're the testing suite 
-  is not built to target the version of mteFunctions 
-  the user is running.
+  Raises an exception if the testing suite is not 
+  built to target the version of mteFunctions the 
+  user is running.
 }
 procedure mteVersionTest;
 begin
