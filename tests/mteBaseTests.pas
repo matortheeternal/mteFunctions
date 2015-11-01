@@ -400,9 +400,10 @@ end;
 
 function Initialize: Integer;
 begin
-  // initialize jvt
-  jvtInitialize;
+  // don't perform tests if on wrong version
+  mteVersionTest;
   
+  jvtInitialize;
   // perform tests
   TestMteBase;
   
