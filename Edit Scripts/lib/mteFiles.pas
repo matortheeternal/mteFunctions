@@ -228,12 +228,12 @@ end;
 {****************************************************}
 { MASTERS METHODS
   Methods for getting or setting masters on files.
+  - AddFilesToList
   - AddMastersToList
+  - AddMaster
   - AddMastersToFile
   - RemoveMaster
   - AddLoadedFilesAsMasters
-  
-  HEAVY UNIT TESTING REQUIRED.
 }
 {****************************************************}
 
@@ -406,9 +406,13 @@ begin
   
   try
     // AddMasterIfMissing will attempt to add the masters to the file.
-    for i := 0 to Pred(sl.Count) do begin
-      if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) then
-        AddMasterIfMissing(f, sl[i]);
+    try
+      for i := 0 to Pred(sl.Count) do begin
+        if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) then
+          AddMasterIfMissing(f, sl[i]);
+      end;
+    except
+      // nothing we can really do...
     end;
     
     // AddMasterIfMissing won't add the masters if they have been removed
@@ -478,7 +482,7 @@ var
   i: Integer;
   f: IInterface;
   slMasters: TStringList;
-  targetFilename: string;
+  filename, targetFilename: string;
 begin
   // raise exception if input file is not assigned
   if not Assigned(targetFile) then
@@ -493,9 +497,10 @@ begin
     for i := 0 to FileCount - 2 do begin
       f := FileByLoadOrder(i);
       // break at target file
-      if GetFileName(f) = targetFilename then
+      filename := GetFileName(f);
+      if filename = targetFilename then
         break;
-      slMasters.Add(GetFileName(aFile));
+      slMasters.Add(filename);
     end;
     
     // add masters to target file
@@ -575,8 +580,12 @@ var
   f: IInterface;
   masterFilename: string;
 begin
+  // raise exception if input file is not assigned
+  if not Assigned(masterFile) then
+    raise Exception.Create('FilesThatRequire: Input file not assigned');
+  // raise exception if input TList is not assigned
   if not Assigned(lst) then
-    raise Exception.Create('FilesThatRequire: TList not assigned');
+    raise Exception.Create('FilesThatRequire: Input TList not assigned');
 
   // get master file's filename
   masterFilename := GetFileName(masterFile);
@@ -590,7 +599,5 @@ begin
       lst.Add(f);
   end;
 end;
-
-
 
 end.
