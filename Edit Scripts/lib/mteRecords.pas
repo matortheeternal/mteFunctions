@@ -81,6 +81,55 @@ begin
   Result := GetFlag(element, index);
 end;
 
+//When given a Record and a File, will try and find the override found in the given file
+function OverrideByFile(element, file: IInterface): IInterface;
+var
+  ovCount, i: Integer;
+  ovByIndex: IInterface;
+begin
+  ovCount := OverrideCount(element);
+  //check if there is even any overrides to begin with.  If not, notify the user and exit the function.
+  if ovCount == 0 then begin
+    //AddMessage('OverrideByFile Error: No Overrides for element ' + ShortName(element)');
+    Exit;
+  end;
+  //Parse through all overrides and check if the file of the override matches the given file parameter
+  for i := 0 to Pred(ovCount) do begin
+    ovByIndex := OverrideByIndex(element, i);
+    //If it does, then return the override
+    if Equals(GetFile(ovByIndex),file) then begin
+      Result := ovByIndex;
+      Exit;
+    end;
+  end;
+end;
+
+//When given an Override of a record, will try to get the previous override, otherwise will return the given record
+function WinningOverrideBefore(element: IInterface): IInterface;
+var
+  ovCount, i: Integer;
+begin
+  ovCount := OverrideCount(element);
+  //If the given record is the only override or the master then return the given record,
+  if ovCount < 2 then begin
+    Result := element;
+    //AddMessage('WinningOverride Error: ' + IntToStr(ovCount) + ' overrides found for ' + ShortName(element) + '.  Returning given Element');
+    Exit;
+  end;
+  //Parse through the list until your record is found
+  for i := Pred(ovCount) downto 0 do begin
+    //If your element is found then return the previous override
+    if Equals(OverrideByIndex(element, i), element) then begin
+      Result := OverrideByIndex(element, (i-1));
+      Exit;
+    end;
+  end;
+end;
+
+
+
+
+
 
 
 end.
