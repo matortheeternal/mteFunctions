@@ -21,7 +21,7 @@ uses 'lib\mteBase';
 
 {
   etToString:
-  Converst a TElementType to a string.
+  Converst a TwbElementType to a string.
   
   Example usage:
   element := ElementByPath(e, 'KWDA');
@@ -48,7 +48,7 @@ end;
 
 {
   dtToString:
-  Converts a DefType to a string.
+  Converts a TwbDefType to a string.
   
   Example usage:
   element := ElementByPath(e, 'KWDA');
