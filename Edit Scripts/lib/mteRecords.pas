@@ -83,103 +83,79 @@ end;
 
 
 //When given a Record and a File, will try and find the override found in the given file
-function OverrideByFile(element, file: IInterface): IInterface;
+function OverrideByFile(aRecord, aFile: IInterface): IInterface;
 var
   ovCount, i: Integer;
   ovByIndex: IInterface;
 begin
   Result := nil;
-  ovCount := OverrideCount(element);
+  if ElementType(aRecord) <> etMainRecord then
+    raise Exception.Create('OverrideByFile: aRecord must be of type etMainRecord.');
+  if ElementType(aFile) <> etFile then 
+    raise Exception.Create('OverrideByFile: aFile must be of type etFile.');
+  ovCount := OverrideCount(aRecord);
   //Parse through all overrides and check if the file of the override matches the given file parameter
   for i := 0 to Pred(ovCount) do begin
-    ovByIndex := OverrideByIndex(element, i);
+    ovByIndex := OverrideByIndex(aRecord, i);
     //If it does, then return the override
-    if Equals(GetFile(ovByIndex),file) then begin
+    if Equals(GetFile(ovByIndex),aFile) then begin
       Result := ovByIndex;
       Exit;
     end;
   end;
 end;
 
-{
-Alternative OverrideByFile Function
-  Unlike the other functions I have gone ahead and tested this one and it does work.
-  Pros:
-  -Doesn't require parsing
-  -Most of the calculations are done in native TES5Edit code
-  
-  Cons:
-  -Requires the function to be cast in a try statement as LoaddOrderFormIDToFileFormID() wil throw an error
-   if the file you give as a parameter does not have the appropriate file as a master. 
-   Not sure how much that may affect speeds.
-   
-  Not quite sure which is faster so I will leave it up to you.
-}
-function OverrideByFile2(element, file: IInterface): IInterface;
-var
-  fFormID: Integer;
-begin
-  Result := nil;
-  try
-    //Checks if the file is capable of having "element" as an override record and, if so, it wil give the appropriate FileFormID.
-    fFormID := LoadOrderFormIDToFileFormID(file, GetLoadOrderFormID(element));
-    Result := RecordByFormID(file, fFormID, false);
-  except
-    on e:exception do begin
-      //AddMessage('OverrideByFile2: Override ' + IntToHex(loFormID,8) + ' not found in file ' + GetFileName(file));
-    end;
-  end;
-end;
-{
- An extension of TES5Edit's native function RecordByFormID().  
- Allows you to input LoadOrderFormIDs rather than FileFormIDs
- Derived this function using the code above.  Should be a useful function.
- Note: Havent integrated this into the function above yet just in case we decide not to use it.
-}
-function RecordByLoadOrderFormID(file: IInterface; loFormID: cardinal; allowOverrides: Boolean): IInterface;
-var
-  fFormID: Integer;
-begin
-  Result := nil;
-  try
-    fFormID := LoadOrderFormIDToFileFormID(file, loFormID);
-    Result := RecordByFormID(file,fFormID,allowOverrides);
-  except
-    on e:Exception do begin
-      //AddMessage('RecordByLoadOrderFormID Warning: Record ' + IntToHex(loFormID,8) + ' not found in ' + GetFileName(file));
-    end;
-  end;
-  //RecordByFormID() will return nil if the record cannot be found.
-end;
-
-//Will return the override index of a given Record, will return -1 if given a Master Recrod
-function GetOverrideIndex(element: IInterface): Integer;
+//Will return the override index of a given Record, will return -1 if given a Master Record
+function GetOverrideIndex(aRecord: IInterface): Integer;
 var
   i, ovCount: Integer;
 begin
-  ovCount := OverrideCount(element);
   Result := -1;
+  if ElementType(aRecord) <> etMainRecord then
+    raise Exception.Create('GetOverrideIndex: aRecord must be of type etMainRecord.');
+  ovCount := OverrideCount(aRecord);
   for i := 0 to Pred(ovCount) do begin
-    If Equals(OverrideByIndex(element, i), element) then begin
+    If Equals(OverrideByIndex(aRecord, i), element) then begin
       Result := i;
     end;
   end;
 end;
 
-//When given an Override of a record, will try to get the next winning override.  
-//If the provided record is the only override and allowMasters is true, then it will return the Master record, otherwise it will return itself.
-function WinningOverrideBefore(element: IInterface; allowMasters: Boolean): IInterface;
+{
+//When given an Override of a record, will try to get the next winning override.
+  If the provided record is the only override and bReturnMasterRecords is set true, then it will return the Master record, otherwise it will return itself.
+  Ex.  If there are 3 Overrides of a Record--Ov1(loaded 1st), Ov2(loaded 2nd), and Ov3(loaded 3rd).
+       WinningOverrideBefore(ov3,true/false) will return Ov2.
+       WinningOverrideBefore(ov2,true/false) will return Ov1.
+       WinningOverrideBefore(ov1,false) will return ov1.
+       WinningOverrideBefore(ov1,true) will return Master(ov1).
+}
+function WinningOverrideBefore(aRecord: IInterface; bReturnMasterRecords: Boolean): IInterface;
 var
-  ovIndex, i: Integer;
+  ovIndex: Integer;
 begin
-  ovIndex := GetOverrideIndex(element)
+  Result := nil;
+  if ElementType(aRecord) <> etMainRecord then
+    raise Exception.Create('WinningOverrideBefore: The parameter aRecord must be of type etMainRecord.');
+  ovIndex := GetOverrideIndex(aRecord)
   Case ovIndex of
-    -1 : raise Exception.Create('WinningOverrideBefore: Provided Record is a Master Record');
+    -1 : raise Exception.Create('WinningOverrideBefore: Provided aRecord is a Master Record');
      0 : begin
-          if AllowMasters then Result := Master(element) 
-          else Result := element;
+          if bReturnMasterRecords then Result := Master(aRecord) 
+          else Result := aRecord;
          end;
-    else Result := OverrideByIndex(element, Pred(ovIndex));
+    else Result := OverrideByIndex(aRecord, Pred(ovIndex));
   end;
 end;
+
+function IsOverrideIn(aRecord, aFile: IInterface): Boolean;
+begin
+  Return := false;
+  if ElementType(aRecord) <> etMainRecord then
+    raise Exception.Create('IsOverrideIn: aRecord must be of type etMainRecord.');
+  if ElementType(aFile) <> etFile then 
+    raise Exception.Create('IsOverrideIn: aFile must be of type etFile.');
+  If Assigned(OverrideByFile(aRecord, aFile)) then Return := true;
+end;
+
 end.
