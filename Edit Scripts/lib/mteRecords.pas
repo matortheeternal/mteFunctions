@@ -60,7 +60,6 @@ begin
       break;
     end;
   end;
-  
   // restore value
   SetNativeValue(element, iRestore);
 end;
@@ -81,6 +80,15 @@ begin
   Result := GetFlag(element, index);
 end;
 
+procedure ToggleFlag(element: IInterface; index: Integer);
+var
+  mask: Integer;
+begin
+  if GetFlag(element, index) then 
+    SetFlag(element, index,false)
+  else
+    SetFlag(element,index,true);
+end;
 
 //When given a Record and a File, will try and find the override found in the given file
 function OverrideByFile(aRecord, aFile: IInterface): IInterface;
@@ -182,7 +190,7 @@ begin
                    (-1): raise Exception.Create('HexFormID:  Cannot call HexFormID on a nil record');
     else raise Exception.Create('HexFormID: aRecord must be of type etMainRecord or etSubRecord');
     end;
-  Result := Copy(editValue, Length(iiElement)-8,8);
+  Result := Copy(editValue, Length(editValue)-8,8);
 end;
 
 {
@@ -201,7 +209,7 @@ begin
   Result := false;
   kwda := ElementByPath(e, 'KWDA');
   for n := 0 to ElementCount(kwda) - 1 do
-    if GetElementEditValues(LinksTo(ElementByIndex(kwda, n)), 'EDID') = edid then 
+    if EditorID(LinksTo(ElementByIndex(kwda, n))) = edid then 
       Result := true;
 end;
 
