@@ -136,14 +136,14 @@ var
 begin
   Result := nil;
   if ElementType(aRecord) <> etMainRecord then
-    raise Exception.Create('WinningOverrideBefore: The parameter aRecord must be of type etMainRecord.');
+    raise Exception.Create('WinningOverrideBefore: aRecord must be of type etMainRecord.');
   ovIndex := GetOverrideIndex(aRecord)
   Case ovIndex of
-    -1 : raise Exception.Create('WinningOverrideBefore: Provided aRecord is a Master Record');
-     0 : begin
+  (-1): raise Exception.Create('WinningOverrideBefore: Provided aRecord is a Master Record');
+     0: begin
           if bReturnMasterRecords then Result := Master(aRecord) 
           else Result := aRecord;
-         end;
+        end;
     else Result := OverrideByIndex(aRecord, Pred(ovIndex));
   end;
 end;
@@ -156,6 +156,116 @@ begin
   if ElementType(aFile) <> etFile then 
     raise Exception.Create('IsOverrideIn: aFile must be of type etFile.');
   If Assigned(OverrideByFile(aRecord, aFile)) then Return := true;
+end;
+
+//Possible Different Approach to HexFormID, not sure if it is any faster or not.
+function HexFormID(aRecord: IInterface): String;
+var
+  loFormID: Integer;
+begin
+  //GetLoadOrderFormID() will return 0 if a non-record/unassigned element is given.
+  loFormID := GetLoadOrderFormID(aRecord);
+  case Ord(loFormID) of
+    0 : Result := '00000000';
+  else Result := IntToHex(loFormID, 8);
+end;
+
+//Modified Older Version.  Can put in hard-coded values as the HexFormID is always placed at the end of the edit value for all versions.
+function HexFormID(aRecord: IInterface): String;
+var
+  editValue: String;
+begin
+  Result := -1;
+    case Ord(ElementType(aRecord)) for
+      Ord(etMainRecord): editValue := geev(aRecord,'Record Header\FormID\');
+       Ord(etSubRecord): editValue := geev(LinksTo(aRecord),'Record Header\FormID\');
+                   (-1): raise Exception.Create('HexFormID:  Cannot call HexFormID on a nil record');
+    else raise Exception.Create('HexFormID: aRecord must be of type etMainRecord or etSubRecord');
+    end;
+  Result := Copy(editValue, Length(iiElement)-8,8);
+end;
+
+{
+  HasKeyword:
+  Checks if an input record has a keyword matching the input EditorID.
+  
+  Example usage:
+  if HasKeyword(e, 'ArmorHeavy') then
+    AddMessage(Name(e) + ' is a heavy armor.');
+}
+function HasKeyword(e: IInterface; edid: string): boolean;
+var
+  kwda: IInterface;
+  n: integer;
+begin
+  Result := false;
+  kwda := ElementByPath(e, 'KWDA');
+  for n := 0 to ElementCount(kwda) - 1 do
+    if GetElementEditValues(LinksTo(ElementByIndex(kwda, n)), 'EDID') = edid then 
+      Result := true;
+end;
+
+//============================================
+{
+  HasItem:
+  Checks if an input record has an item matching the input EditorID.
+  
+  Example usage:
+  if HasItem(e, 'IngotIron') then
+    AddMessage(Name(e) + ' is made using iron!');
+}
+function HasItem(rec: IInterface; s: string): boolean;
+var
+  name: string;
+  items, li: IInterface;
+  i: integer;
+begin
+  Result := false;
+  items := ElementByPath(rec, 'Items');
+  if not Assigned(items) then 
+    exit;
+  
+  for i := 0 to ElementCount(items) - 1 do begin
+    li := ElementByIndex(items, i);
+    name := EditorID(LinksTo(ElementByPath(li, 'CNTO - Item\Item')));
+    if name = s then begin
+      Result := true;
+      Break;
+    end;
+  end;
+end;
+
+{
+  HasPerkCondition:
+  Checks if an input record has a HasPerk condition requiring a perk
+  matching the input EditorID.
+  
+  Example usage:
+  if HasPerkCondition(e, 'AdvancedSmithing') then
+    AddMessage(Name(e) + ' is an advanced armor!');
+}
+function HasPerkCondition(rec: IInterface; s: string): boolean;
+var
+  name, func: string;
+  conditions, ci: IInterface;
+  i: integer;
+begin
+  Result := false;
+  conditions := ElementByPath(rec, 'Conditions');
+  if not Assigned(conditions) then
+    exit;
+    
+  for i := 0 to ElementCount(conditions) - 1 do begin
+    ci := ElementByIndex(conditions, i);
+    func := geev(ci, 'CTDA - \Function');
+    if func = 'HasPerk' then begin
+      name := EditorID(LinksTo(ElementByPath(ci, 'CTDA - \Perk'));
+      if name = s then begin
+        Result := true;
+        Break;
+      end;
+    end;
+  end;
 end;
 
 end.
