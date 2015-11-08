@@ -90,7 +90,9 @@ begin
     SetFlag(element,index,true);
 end;
 
-//When given a Record and a File, will try and find the override found in the given file
+{
+When given a Record and a File, will try and find the override found in the given file
+}
 function OverrideByFile(aRecord, aFile: IInterface): IInterface;
 var
   ovCount, i: Integer;
@@ -113,7 +115,9 @@ begin
   end;
 end;
 
-//Will return the override index of a given Record, will return -1 if given a Master Record
+{
+	Will return the override index of a given Record, will return -1 if given a Master Record
+}
 function GetOverrideIndex(aRecord: IInterface): Integer;
 var
   i, ovCount: Integer;
@@ -145,7 +149,7 @@ begin
   Result := nil;
   if ElementType(aRecord) <> etMainRecord then
     raise Exception.Create('WinningOverrideBefore: aRecord must be of type etMainRecord.');
-  ovIndex := GetOverrideIndex(aRecord)
+  ovIndex := GetOverrideIndex(aRecord);
   Case ovIndex of
   (-1): raise Exception.Create('WinningOverrideBefore: Provided aRecord is a Master Record');
      0: begin
@@ -166,8 +170,26 @@ begin
   If Assigned(OverrideByFile(aRecord, aFile)) then Return := true;
 end;
 
-//Possible Different Approach to HexFormID, not sure if it is any faster or not.
+{
+Modified Older Version.  Can put in hard-coded values as the HexFormID is always placed at the end of the edit value for all versions.
+}
 function HexFormID(aRecord: IInterface): String;
+var
+  editValue: String;
+begin
+  Result := -1;
+    case Ord(ElementType(aRecord)) of
+      Ord(etMainRecord): editValue := geev(aRecord,'Record Header\FormID\');
+                Ord(-1): raise Exception.Create('HexFormID:  Cannot call HexFormID on a nil record');
+      else raise Exception.Create('HexFormID: aRecord must be of type etMainRecord or etSubRecord');
+    end;
+  Result := Copy(editValue, Length(editValue)-8,8);
+end;
+
+{
+Possible Different Approach to HexFormID, not sure if it is any faster or not.
+}
+function HexFormID2(aRecord: IInterface): String;
 var
   loFormID: Integer;
 begin
@@ -175,22 +197,8 @@ begin
   loFormID := GetLoadOrderFormID(aRecord);
   case Ord(loFormID) of
     0 : Result := '00000000';
-  else Result := IntToHex(loFormID, 8);
-end;
-
-//Modified Older Version.  Can put in hard-coded values as the HexFormID is always placed at the end of the edit value for all versions.
-function HexFormID(aRecord: IInterface): String;
-var
-  editValue: String;
-begin
-  Result := -1;
-    case Ord(ElementType(aRecord)) for
-      Ord(etMainRecord): editValue := geev(aRecord,'Record Header\FormID\');
-       Ord(etSubRecord): editValue := geev(LinksTo(aRecord),'Record Header\FormID\');
-                   (-1): raise Exception.Create('HexFormID:  Cannot call HexFormID on a nil record');
-    else raise Exception.Create('HexFormID: aRecord must be of type etMainRecord or etSubRecord');
-    end;
-  Result := Copy(editValue, Length(editValue)-8,8);
+    else Result := IntToHex(loFormID, 8);
+  end;
 end;
 
 {
@@ -201,6 +209,7 @@ end;
   if HasKeyword(e, 'ArmorHeavy') then
     AddMessage(Name(e) + ' is a heavy armor.');
 }
+
 function HasKeyword(e: IInterface; edid: string): boolean;
 var
   kwda: IInterface;
@@ -213,7 +222,6 @@ begin
       Result := true;
 end;
 
-//============================================
 {
   HasItem:
   Checks if an input record has an item matching the input EditorID.
@@ -272,6 +280,43 @@ begin
         Result := true;
         Break;
       end;
+    end;
+  end;
+end;
+
+{
+ When given a Record File (but doesn't have to be), it will recursively search and Add etSubRecords
+ into a TStringList as objects.
+
+ iStringFormat :
+    0 : EditorID of Record
+    1 : HexFormID() of Record
+    2 : Name of Container Element.
+}
+procedure AddSubRecordsToList(aElement: IInterface; iStringFormat: Integer; var sl: TStringList);
+var
+ i: Integer;
+ s: String;
+begin
+  if not Assigned(aElement) then begin
+    raise Exception.Create('AddSubRecordsToList: cannot call AddSubRecordsToList with a nil element');
+  end;
+
+  if (ElementCount(aElement) = 0) then begin
+    if (CanContainFormIDs(aElement) and (ElementType(aElement) = etSubRecord)) then begin
+      Case Ord(iStringFormat) of
+        0 : s := EditorID(LinksTo(aElement));
+        1 : s := HexFormID2(LinksTo(aElement));
+        2 : s := Path(aElement);
+        else s := '';
+      end;
+      AddMessage(s);
+      sl.AddObject(s, TObject(aElement));
+    end;
+  end
+  else begin
+    for i := 0 to Pred(ElementCount(aElement)) do begin
+      AddSubRecordsToList(ElementByIndex(aElement, i), iStringFormat, sl);
     end;
   end;
 end;
