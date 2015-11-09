@@ -806,20 +806,20 @@ end;
 
 {
   SearchTListForElement:
-    Will check an element against all elements inside of a TList/TStringList for a match and return its index.  Otherwise will return -1
+    Will check an element against all elements inside of a TStringList for a match and return its index.  Otherwise will return -1
 
     @Mator:  While this should be in mteTypes, I am putting it here for the time being so I can use it in mteRecords.
 }
 
-function SearchTListForElement(aElement: IInterface; var tl: TList): Integer;
+function SearchTListForElement(aElement: IInterface; var sl: TStringList): Integer;
 var
   i: Integer;
 begin
   Result := (-1);
   if not Assigned(aElement) then raise Exception.Create('SearchTListForElement: Input Element is not Assigned');
-  if not Assigned(tl) then raise Exception.Create('SearchTListForElement: Input List is not Assigned');
-  for i := 0 to Pred(tl.Count) do begin
-    If Equals(aElement, ObjectToElement(tl.Objects[i]) then begin 
+  if not Assigned(sl) then raise Exception.Create('SearchTListForElement: Input List is not Assigned');
+  for i := 0 to Pred(sl.Count) do begin
+    If Equals(aElement, ObjectToElement(sl.Objects[i]) then begin 
       Result := i;
     end;
   end;
