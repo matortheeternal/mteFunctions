@@ -805,7 +805,7 @@ begin
 end;
 
 {
-  GetElementListIndex:
+  SearchTListForElement:
     Will check an element against all elements inside of a TList/TStringList for a match and return its index.  Otherwise will return -1
 
     @Mator:  While this should be in mteTypes, I am putting it here for the time being so I can use it in mteRecords.
