@@ -305,13 +305,14 @@ begin
   if ElementCount(aElement) = 0 then begin
     if CanContainFormIDs(aElement) then begin
       if ElementType(aElement) = etSubRecord then begin
-        Case Ord(iStringFormat) of
-          0 : s := EditorID(LinksTo(aElement));
-          1 : s := HexFormID2(LinksTo(aElement));
-          2 : s := Path(aElement);
-          else s := '';
-        end;
-        sl.AddObject(s, TObject(aElement));
+
+          Case Ord(iStringFormat) of
+            0 : s := EditorID(LinksTo(aElement));
+            1 : s := HexFormID2(LinksTo(aElement));
+            2 : s := Path(aElement);
+            else s := '';
+          end;
+          sl.AddObject(s, TObject(aElement));
       end;
     end;
   end
@@ -348,15 +349,17 @@ begin
   try
     AddSubRecordsToList(aRecord, 0, slTemp);
     for i := 0 to Pred(slTemp.Count) do begin
-      eTemp := ObjectToElement(slTemp.Objects[i]);
-      fTemp := GetFile(LinksTo(eTemp));
-      if Equals(aFile, eTemp) then begin
-        sl.AddObject(Name(eTemp),TObject(eTemp));
+      eTemp := LinksTo(ObjectToElement(slTemp.Objects[i]));
+      if Assigned(eTemp) then begin
+        fTemp := GetFile(eTemp);
+        if Equals(aFile, fTemp) then begin
+          sl.AddObject(Name(eTemp),TObject(eTemp));
+        end;
       end;
     end;
   except
     on e:Exception do
-      ShowMessage('GrabElementByMaster: Error: ' + e.Message);
+      AddMessage('GrabElementByMaster: Error: ' + e.Message);
   finally
     slTemp.Free;
   end;
