@@ -285,43 +285,59 @@ begin
 end;
 
 {
- When given a Record File (or Element have to be), it will recursively search and Add etSubRecords (aka Forms)
- into a TStringList as objects.
+  FormIDsToList:
+    Will recursively search through the provided containers's children to find all SubRecords (elements which hold FormIDs)
+    and add them to a StringList as objects.  Setting an iStringFormat will determine the string that is paired with the SubRecord.
 
- iStringFormat :
-    0 : EditorID of Record
-    1 : HexFormID() of Record
-    2 : Name of Container Element.
+    So After Running:
+    FormIDsToList(aRecord, 0, sl);
+    sl.Objects[0] := Element which contains a FormID.
+    sl[0] := sl.Objects[0]'s EditorID.
+
 }
-procedure AddSubRecordsToList(aElement: IInterface; iStringFormat: Integer; var sl: TStringList);
+
+procedure FormIDsToList(aElement: IInterface; var sl:TStringList);
 var
- i: Integer;
- s: String;
+  i: Integer;
 begin
   if not Assigned(aElement) then begin
-    raise Exception.Create('AddSubRecordsToList: cannot call AddSubRecordsToList with a nil element');
+    raise Exception.Create('FormIDsToList: cannot call FormIDsToList with a nil element');
   end;
-
-  if ElementCount(aElement) = 0 then begin
-    if CanContainFormIDs(aElement) then begin
-      if ElementType(aElement) = etSubRecord then begin
-
-          Case Ord(iStringFormat) of
-            0 : s := EditorID(LinksTo(aElement));
-            1 : s := HexFormID2(LinksTo(aElement));
-            2 : s := Path(aElement);
-            else s := '';
-          end;
-          sl.AddObject(s, TObject(aElement));
-      end;
-    end;
-  end
-  else begin
-    for i := 0 to Pred(ElementCount(aElement)) do begin
-      AddSubRecordsToList(ElementByIndex(aElement, i), iStringFormat, sl);
-    end;
+  case Ord(ElementType(aElement)) of
+    Ord(etFile)       : raise Exception.Create('FormIDsToList: Cannot call FormIDsToList on a file.');
+    Ord(etGroupRecord): raise Exception.Create('FormIDsToList: Cannot call FormIDsToList on a group record.');
+    Ord(etMainRecord) : begin
+                        for i := 0 to Pred(ElementCount(aElement)) do begin
+                          if (Name(aElement) = 'Record Header') then continue;
+                          AddToList(ElementByIndex(aElement, i), sl);
+                        end;
+                      end;
+    else AddToList(aElement, sl);
   end;
 end;
+
+{
+  AddToList:
+    !Please use the entry function FormIDsToList!
+}
+procedure AddToList(aElement: IInterface; var sl: TStringList);
+var
+ i: Integer;
+ e: IInterface;
+begin
+  if CanContainFormIDs(aElement) then begin
+    e := LinksTo(aElement);
+    if Assigned(e) then begin
+        sl.AddObject('',TObject(aElement));
+    end;
+  end;
+  for i := 0 to Pred(ElementCount(aElement)) do begin
+    AddToList(ElementByIndex(aElement, i), sl);
+  end;
+
+end;
+
+
 
 
 {
@@ -345,23 +361,23 @@ var
   slTemp: TStringList;
   eTemp, fTemp: IInterface;
 begin
+  if not Assigned(aFile) then begin
+    raise Exception.Create('GrabElementsByMaster: cannot call GrabElementsByMaster with a nil file');
+  end else if not Assigned(aRecord) then begin
+    raise Exception.Create('GrabElementsByMaster: cannot call GrabElementsByMaster with a nil record');
+  end else if not Assigned(sl) then begin
+    raise Exception.Create('GrabElementsByMaster: cannot call GrabElementsByMaster with a nil StringList');
+  end;
   slTemp := TStringList.Create;
-  try
-    AddSubRecordsToList(aRecord, 0, slTemp);
-    for i := 0 to Pred(slTemp.Count) do begin
-      eTemp := LinksTo(ObjectToElement(slTemp.Objects[i]));
-      if Assigned(eTemp) then begin
-        fTemp := GetFile(eTemp);
-        if Equals(aFile, fTemp) then begin
-          sl.AddObject(Name(eTemp),TObject(eTemp));
-        end;
+  FormIDsToList(aRecord, slTemp);
+  for i := 0 to Pred(slTemp.Count) do begin
+    eTemp := LinksTo(ObjectToElement(slTemp.Objects[i]));
+    if Assigned(eTemp) then begin
+      fTemp := GetFile(eTemp);
+      if Equals(aFile, fTemp) then begin
+        sl.AddObject('',TObject(ObjectToElement(slTemp.Objects[i])));
       end;
     end;
-  except
-    on e:Exception do
-      AddMessage('GrabElementByMaster: Error: ' + e.Message);
-  finally
-    slTemp.Free;
   end;
 end;
 

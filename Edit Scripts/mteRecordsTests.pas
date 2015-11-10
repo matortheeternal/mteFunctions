@@ -196,15 +196,15 @@ begin
     on x: Exception do Fail(x);
   end;
 
-  (*** AddSubRecordsToList Tests ***)
-  Describe('AddSubRecordsToList');
+  (*** FormIDsToList Tests ***)
+  Describe('FormIDsToList');
   try
     sl := TStringList.Create;
     f := FileByLoadOrder(0);
     rec := RecordByFormId(f, StrToInt('$000A82B9'),false);
     Describe('Checking if Objects Were properly assigned sl');
     try
-      AddSubRecordsToList(rec,1,sl);
+      FormIDsToList(rec,1,sl);
       trec := ObjectToElement(sl.Objects[0]);
       Expect(Assigned(trec), 'This should return true');
       Pass;
