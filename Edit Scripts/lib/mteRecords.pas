@@ -285,7 +285,7 @@ begin
 end;
 
 {
- When given a Record File (but doesn't have to be), it will recursively search and Add etSubRecords
+ When given a Record File (or Element have to be), it will recursively search and Add etSubRecords (aka Forms)
  into a TStringList as objects.
 
  iStringFormat :
@@ -320,5 +320,46 @@ begin
     end;
   end;
 end;
+
+
+{
+  GrabElementsByMaster:
+    Will fill a StringList of Container Elements of a given Record who's Masterfrom a provided File.
+    Usage: 
+      aFile := FileByName('Skyrim.esm');
+      aRecord := [A MainRecord];
+      aStoredRecord;
+
+      GrabElementsByMaster(aFile, aRecord, sl);
+      
+      aStoredRecord := LinksTo(ObjectToElement(sl.Objects[0]));
+      AddMessage(GetFileName(aStoredRecord)); 
+        //Will output 'Skyrim.esm'
+}
+
+procedure GrabElementsByMaster(aFile, aRecord: IInterface; var sl:TList);
+var
+  i:Integer;
+  slTemp: TStringList;
+  eTemp, fTemp: IInterface;
+begin
+  slTemp := TStringList.Create;
+  try
+    AddSubRecordsToList(aRecord, 0, slTemp);
+    for i := 0 to Pred(slTemp.Count) do begin
+      eTemp := ObjectToElement(slTemp.Objects[i]);
+      fTemp := GetFile(LinksTo(eTemp));
+      if Equals(aFile, eTemp) then begin
+        sl.AddObject(Name(eTemp),TObject(eTemp));
+      end;
+    end;
+  except
+    on e:Exception do
+      ShowMessage('GrabElementByMaster: Error: ' + e.Message);
+  finally
+    slTemp.Free;
+  end;
+end;
+
 
 end.
