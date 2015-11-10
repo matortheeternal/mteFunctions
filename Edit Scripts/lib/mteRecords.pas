@@ -310,7 +310,6 @@ begin
         2 : s := Path(aElement);
         else s := '';
       end;
-      AddMessage(s);
       sl.AddObject(s, TObject(aElement));
     end;
   end
