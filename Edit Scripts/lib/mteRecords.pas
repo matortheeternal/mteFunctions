@@ -302,15 +302,17 @@ begin
     raise Exception.Create('AddSubRecordsToList: cannot call AddSubRecordsToList with a nil element');
   end;
 
-  if (ElementCount(aElement) = 0) then begin
-    if (CanContainFormIDs(aElement) and (ElementType(aElement) = etSubRecord)) then begin
-      Case Ord(iStringFormat) of
-        0 : s := EditorID(LinksTo(aElement));
-        1 : s := HexFormID2(LinksTo(aElement));
-        2 : s := Path(aElement);
-        else s := '';
+  if ElementCount(aElement) = 0 then begin
+    if CanContainFormIDs(aElement) then begin
+      if ElementType(aElement) = etSubRecord then begin
+        Case Ord(iStringFormat) of
+          0 : s := EditorID(LinksTo(aElement));
+          1 : s := HexFormID2(LinksTo(aElement));
+          2 : s := Path(aElement);
+          else s := '';
+        end;
+        sl.AddObject(s, TObject(aElement));
       end;
-      sl.AddObject(s, TObject(aElement));
     end;
   end
   else begin
