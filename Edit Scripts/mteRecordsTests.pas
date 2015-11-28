@@ -62,8 +62,9 @@ end;
 }
 procedure TestMteRecords;
 var
-  f, rec, flags: IInterface;
+  f, rec, trec, flags : IInterface;
   iRestore, iActual: Integer;
+  sl: TStringList;
 begin
   (*** SetFlag Tests ***)
   Describe('SetFlag');
@@ -189,12 +190,43 @@ begin
         Fail(x);
       end;
     end;
-    
     // all tests passed?
     Pass;
   except
     on x: Exception do Fail(x);
   end;
+
+  (*** FormIDsToList Tests ***)
+  Describe('FormIDsToList');
+  try
+    sl := TStringList.Create;
+    f := FileByLoadOrder(0);
+    rec := RecordByFormId(f, StrToInt('$000A82B9'),false);
+    Describe('Checking if Objects Were properly assigned sl');
+    try
+      FormIDsToList(rec,1,sl);
+      trec := ObjectToElement(sl.Objects[0]);
+      Expect(Assigned(trec), 'This should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+
+    Describe('Checking if the element in the sl is pointing to the proper file');
+    try
+      Expect(Equals(GetFile(trec),f),'This should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  finally
+      sl.Free;
+      sl := nil;
+  end;
+
 end;
 
 
