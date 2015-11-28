@@ -91,7 +91,7 @@ begin
 end;
 
 {
-When given a Record and a File, will try and find the override found in the given file
+  When given a Record and a File, will try and find the override found in the given file
 }
 function OverrideByFile(aRecord, aFile: IInterface): IInterface;
 var
@@ -127,16 +127,20 @@ begin
     raise Exception.Create('GetOverrideIndex: aRecord must be of type etMainRecord.');
   ovCount := OverrideCount(aRecord);
   for i := 0 to Pred(ovCount) do begin
-    If Equals(OverrideByIndex(aRecord, i), element) then begin
+    If Equals(OverrideByIndex(aRecord, i), aRecord) then begin
       Result := i;
     end;
   end;
 end;
 
 {
-//When given an Override of a record, will try to get the next winning override.
-  If the provided record is the only override and bReturnMasterRecords is set true, then it will return the Master record, otherwise it will return itself.
-  Ex.  If there are 3 Overrides of a Record--Ov1(loaded 1st), Ov2(loaded 2nd), and Ov3(loaded 3rd).
+  When given an Override of a record, will try to get the next 
+  winning override.
+  If the provided record is the only override and bReturnMasterRecords 
+  is set true, then it will return the Master record, otherwise it 
+  will return itself.
+  Ex.  If there are 3 Overrides of a Record--Ov1(loaded 1st), 
+  Ov2(loaded 2nd), and Ov3(loaded 3rd).
        WinningOverrideBefore(ov3,true/false) will return Ov2.
        WinningOverrideBefore(ov2,true/false) will return Ov1.
        WinningOverrideBefore(ov1,false) will return ov1.
@@ -171,29 +175,15 @@ begin
 end;
 
 {
-Modified Older Version.  Can put in hard-coded values as the HexFormID is always placed at the end of the edit value for all versions.
+  HexFormID:
+  Returns the hexadecimal Load Order FormID of a record as a string.
 }
-function HexFormID(aRecord: IInterface): String;
-var
-  editValue: String;
-begin
-  Result := -1;
-    case Ord(ElementType(aRecord)) of
-      Ord(etMainRecord): editValue := geev(aRecord,'Record Header\FormID\');
-                Ord(-1): raise Exception.Create('HexFormID:  Cannot call HexFormID on a nil record');
-      else raise Exception.Create('HexFormID: aRecord must be of type etMainRecord or etSubRecord');
-    end;
-  Result := Copy(editValue, Length(editValue)-8,8);
-end;
-
-{
-Possible Different Approach to HexFormID, not sure if it is any faster or not.
-}
-function HexFormID2(aRecord: IInterface): String;
+function HexFormID(aRecord: IInterface): string;
 var
   loFormID: Integer;
 begin
-  //GetLoadOrderFormID() will return 0 if a non-record/unassigned element is given.
+  // GetLoadOrderFormID() will return 0 if a non-record/unassigned 
+  // element is given.
   loFormID := GetLoadOrderFormID(aRecord);
   case Ord(loFormID) of
     0 : Result := '00000000';
@@ -286,17 +276,18 @@ end;
 
 {
   FormIDsToList:
-    Will recursively search through the provided containers's children to find all SubRecords (elements which hold FormIDs)
-    and add them to a StringList as objects.  Setting an iStringFormat will determine the string that is paired with the SubRecord.
+  Will recursively search through the provided containers's children 
+  to find all SubRecords (elements which hold FormIDs)
+  and add them to a StringList as objects.  Setting an iStringFormat 
+  will determine the string that is paired with the SubRecord.
 
-    So After Running:
-    FormIDsToList(aRecord, 0, sl);
-    sl.Objects[0] := Element which contains a FormID.
-    sl[0] := sl.Objects[0]'s EditorID.
-
+  So After Running:
+  FormIDsToList(aRecord, 0, sl);
+  sl.Objects[0] := Element which contains a FormID.
+  sl[0] := sl.Objects[0]'s EditorID.
 }
 
-procedure FormIDsToList(aElement: IInterface; var sl:TStringList);
+procedure FormIDsToList(aElement: IInterface; var sl: TStringList);
 var
   i: Integer;
 begin
@@ -318,7 +309,7 @@ end;
 
 {
   AddToList:
-    !Please use the entry function FormIDsToList!
+  !Please use the entry function FormIDsToList!
 }
 procedure AddToList(aElement: IInterface; var sl: TStringList);
 var
@@ -337,22 +328,21 @@ begin
 
 end;
 
-
-
-
 {
   GrabElementsByMaster:
-    Will fill a StringList of Container Elements of a given Record who's Masterfrom a provided File.
-    Usage: 
-      aFile := FileByName('Skyrim.esm');
-      aRecord := [A MainRecord];
-      aStoredRecord;
+  Will fill a StringList of container elements of a given record who's 
+  Masterfrom a provided File.
+  
+  Usage: 
+  aFile := FileByName('Skyrim.esm');
+  aRecord := [A MainRecord];
+  aStoredRecord;
 
-      GrabElementsByMaster(aFile, aRecord, sl);
-      
-      aStoredRecord := LinksTo(ObjectToElement(sl.Objects[0]));
-      AddMessage(GetFileName(aStoredRecord)); 
-        //Will output 'Skyrim.esm'
+  GrabElementsByMaster(aFile, aRecord, sl);
+  
+  aStoredRecord := LinksTo(ObjectToElement(sl.Objects[0]));
+  AddMessage(GetFileName(aStoredRecord)); 
+  //Will output 'Skyrim.esm'
 }
 
 procedure GrabElementsByMaster(aFile, aRecord: IInterface; var sl:TList);
