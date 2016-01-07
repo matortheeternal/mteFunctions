@@ -7,7 +7,7 @@
 
 unit mteRecords;
 
-uses 'lib\mteElements';
+uses 'lib\mteBase', 'lib\mteElements';
 
 {****************************************************}
 { GENERAL METHODS

@@ -7,7 +7,7 @@
 
 unit mteFiles;
   
-uses 'lib\mteElements';
+uses 'lib\mteBase', 'lib\mteElements';
 
 const
   mteBethesdaSkyrimFiles = 'Skyrim.esm'#44'Update.esm'#44'Dawnguard.esm'#44'HearthFires.esm'#44
