@@ -164,7 +164,71 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** VersionToString Tests ***)
+  (*** ShortenVersion Tests ***)
+  Describe('ShortenVersion');
+  try
+    // Test with empty version
+    Describe('Empty string input for version');
+    try
+      ExpectEqual(ShortenVersion('', 4), '', 'Should return an empty string');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // Test with too many clauses
+    Describe('Too many clauses');
+    try
+      ExpectEqual(ShortenVersion('1.2.3', 4), '1.2.3', 'Should return input version');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // Test with zero clauses
+    Describe('Zero clauses');
+    try
+      ExpectEqual(ShortenVersion('1.2.3', 0), '', 'Should return an empty string');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // Test with zero clauses
+    Describe('Equal clauses');
+    try
+      ExpectEqual(ShortenVersion('1.2.3', 3), '1.2.3', 'Should return input version');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // Test with an empty clause
+    Describe('Empty clause');
+    try
+      ExpectEqual(ShortenVersion('1..3.4', 3), '1..3', 'Should return empty clause');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // Test with multi-digit clauses
+    Describe('Multi-digit clauses');
+    try
+      ExpectEqual(ShortenVersion('102.304.506.708.9010.11012.13014.15016', 6), 
+        '102.304.506.708.9010.11012', 'Should return multi-digit clauses');
+      Pass;
+    except 
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** xEditVersionCheck Tests ***)
   Describe('xEditVersionCheck');
   try
     // Test with empty version
@@ -251,7 +315,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** xEditGameCheck ***)
+  (*** xEditGameCheck Tests ***)
   Describe('xEditGameCheck');
   try
     // No supported games
@@ -296,7 +360,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** VersionCheck ***)
+  (*** VersionCheck Tests ***)
   Describe('VersionCheck');
   try
     // same versions
@@ -354,7 +418,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** mteVersionCheck ***)
+  (*** mteVersionCheck Tests ***)
   Describe('mteVersionCheck');
   try
     // Test with mteVersion

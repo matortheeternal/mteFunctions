@@ -109,6 +109,34 @@ begin
 end;
 
 {
+  ShortenVersion:
+  Shortens a version string @vs to a number of clauses 
+  @numClauses.
+  
+  Example usage:
+  vs := '1.2.3.4';
+  AddMessage(ShortenVersion(vs, 3)); // '1.2.3'
+  AddMessage(ShortenVersion(vs, 2)); // '1.2'
+  AddMessage(ShortenVersion(vs, 1)); // '1'
+}
+function ShortenVersion(vs: string; numClauses: Integer): string;
+var
+  sChar: string;
+  i, numDots: Integer;
+begin
+  Result := '';
+  numDots := 0;
+  for i := 1 to Length(vs) do begin
+    sChar := Copy(vs, i, 1);
+    if sChar = '.' then
+      Inc(numDots);
+    if numDots = numClauses then
+      break;
+    Result := Result + sChar;
+  end;
+end;
+
+{
   xEditVersionCheck:
   Takes a minimum version string and a maximum version
   string, and returns true if the user is running a
