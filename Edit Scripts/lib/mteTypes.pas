@@ -7,6 +7,8 @@
 
 unit mteTypes;
 
+uses 'lib\mteBase';
+
 {*****************************************************************************}
 { Boolean Functions
   Functions for handling and converting booleans.
