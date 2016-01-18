@@ -54,11 +54,13 @@ end;
   i := IntLog(1573741824, 1024);
   AddMessage(IntToStr(i)); // 3
 }
-function IntLog(Value, Base: Int64): Int64;
+function IntLog(Value, Base: Integer): Integer;
 begin
   Result := 0;
-  while Value > Base do begin
-    Value = Value div Base;
+  if Base <= 1 then
+    raise Exception.Create('IntLog: Base cannot be less than or equal to 1');
+  while Value >= Base do begin
+    Value := Value div Base;
     Inc(Result);
   end;
 end;
@@ -67,27 +69,29 @@ end;
   FormatFileSize:
   Formats a file size in @bytes to a human readable string.
   
+  NOTE:
+  Currently xEdit scripting doesn't support an Int64 or Cardinal data
+  type, so the maximum value this function can take is +2147483648,
+  which comes out to 1.99GB.
+  
   Example usage:
   AddMessage(FormatFileSize(5748224)); // '5.48 MB'
-  AddMessage(FormatFileSize(-41306451305613)); // '-37.56 TB
+  AddMessage(FormatFileSize(-2147483647)); // '-1.99 GB
 }
-function FormatFileSize(const bytes: Int64): string;
+function FormatFileSize(const bytes: Integer): string;
 const
-  units: array of string[0..6] = (
+  units: array of string[0..3] = (
     'bytes', 
     'KB', // Kilobyte, 10^3 bytes
     'MB', // Megabyte, 10^6 bytes
-    'GB', // Gigabyte, 10^9 bytes
-    'TB', // Terabyte, 10^12 bytes
-    'PB', // Petabyte, 10^15 bytes
-    'EB'  // Exabyte, 10^18 bytes
+    'GB'  // Gigabyte, 10^9 bytes
   );
 var
   uIndex: Integer;
 begin
   uIndex := IntLog(abs(bytes), 1024);
   if (uIndex > 0) then
-    Result := Format('%f %s', [bytes / power(1024, uIndex), units[uIndex]])
+    Result := Format('%f %s', [bytes / IntPower(1024, uIndex), units[uIndex]])
   else
     Result := Format('%f %s', [bytes, units[uIndex]]);
 end;
