@@ -300,4 +300,34 @@ begin
   Result := s;
 end;
 
+
+{*****************************************************************************}
+{ Date and Time Helpers
+  Functions for handling dates and times.
+  
+  List of functions:
+  - RateStr
+  - TimeStr
+}
+{*****************************************************************************}
+
+{ Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
+function RateStr(date: TDateTime): string;
+begin
+  if date > 1.0 then
+    Result := Format('Every %0.2f days', [date])
+  else if date * 24.0 > 1.0 then
+    Result := Format('Every %0.1f hours', [date * 24.0])
+  else if date * 24.0 * 60.0 > 1.0 then
+    Result := Format('Every %0.1f minutes', [date * 24.0 * 60.0])
+  else
+    Result := Format('Every %0.1f seconds', [date * 24.0 * 60.0 * 60.0]);
+end;
+
+{ Converts a TDateTime to a time string, e.g. 19d 20h 3m 30s }
+function TimeStr(date: TDateTime): string;
+begin
+  Result := Format('%dd %dh %dm', [Trunc(date), HourOf(date), MinuteOf(date)]);
+end;
+
 end.
