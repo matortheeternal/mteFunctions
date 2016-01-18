@@ -139,16 +139,23 @@ const
   cDelimiters = #9#10#13' ,.:;"\/()[]{}';
 var
   i: Integer;
+  bDelimited: boolean;
+  sChar: string;
 begin
   // set default result
   Result := '';
   
   // if input isn't empty, loop through the characters in it
   if (sText <> '') then begin
+    bDelimited := true;
     for i := 1 to Length(sText) do begin
       sChar := LowerCase(Copy(sText, i, 1));
       if (Pos(sChar, cDelimiters) > 0) then
+        bDelimited := true
+      else if bDelimited then begin
         sChar := UpCase(sChar);
+        bDelimited := false;
+      end;
       Result := Result + sChar;
     end;
   end;
@@ -166,23 +173,26 @@ end;
 }
 function SentenceCase(sText: string): string;
 const
-  cTerminators := '!.?';
+  cTerminators = '!.?';
 var
   i: Integer;
   bTerminated: boolean;
+  sChar: string;
 begin
   // set result
   Result := '';
   
   // if input isn't empty, loop through the characters in it
   if (sText <> '') then begin
-    bTerminated := false;
+    bTerminated := true;
     for i := 1 to Length(sText) do begin
       sChar := LowerCase(Copy(sText, i, 1));
       if (Pos(sChar, cTerminators) > 0) then
-        bTerminated := true;
-      if bTerminated and (sChar <> ' ') then
+        bTerminated := true
+      else if bTerminated and (sChar <> ' ') then begin
         sChar := UpCase(sChar);
+        bTerminated := false;
+      end;
       Result := Result + sChar;
     end;
   end;
@@ -191,14 +201,18 @@ end;
 {
   CopyFromTo:
   Returns a substring in a string @str inclusively between two indexes 
-  @first and @last.
+  @iStart and @iEnd.
   
   Example usage:
   AddMessage(CopyFromTo('this is an example', 6, 10)); // 'is an'
 }
-function CopyFromTo(str: string; first, last: Integer): string;
+function CopyFromTo(str: string; iStart, iEnd: Integer): string;
 begin
-  Result := Copy(str, first, (last - first) + 1);
+  if iStart < 1 then
+    raise Exception.Create('CopyFromTo: Start index cannot be less than 1');
+  if iEnd < iStart then
+    raise Exception.Create('CopyFromTo: End index cannot be less than the start index');
+  Result := Copy(str, iStart, (iEnd - iStart) + 1);
 end;
 
 { 

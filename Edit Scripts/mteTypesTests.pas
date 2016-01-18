@@ -227,7 +227,190 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+end;
+
+{
+  TestStringHelpers:
+  Tests the string helper functions in mteTypes.
+}
+procedure TestStringHelpers;
+var
+  bCaughtException: boolean;
+begin
+  (*** TitleCase Tests ***)
+  Describe('TitleCase');
+  try
+    Describe('Empty string');
+    try
+      ExpectEqual(TitleCase(''), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('One letter');
+    try
+      ExpectEqual(TitleCase('a'), 'A', 'If lowercase, should return the letter uppercase');
+      ExpectEqual(TitleCase('B'), 'B', 'If uppercase, should not change');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Several words separated by spaces');
+    try
+      ExpectEqual(TitleCase('this is a title'), 'This Is A Title', 
+        'Should capitalize the first letter of each word');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Other delimiters');
+    try
+      ExpectEqual(TitleCase('this.is [a title] {hi} (good) "please"'), 'This.Is [A Title] {Hi} (Good) "Please"', 
+        'Should capitalize the first letter of each word');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
   
+  (*** SentenceCase Tests ***)
+  Describe('SentenceCase');
+  try
+    Describe('Empty string');
+    try
+      ExpectEqual(SentenceCase(''), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('One letter');
+    try
+      ExpectEqual(SentenceCase('a'), 'A', 'If lowercase, should return the letter uppercase');
+      ExpectEqual(SentenceCase('B'), 'B', 'If uppercase, should not change');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('One sentence');
+    try
+      ExpectEqual(SentenceCase('this is an example sentence.'), 'This is an example sentence.', 
+        'Should capitalize the first letter of the sentence');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Two sentences');
+    try
+      ExpectEqual(SentenceCase('wow!  that''s really cool.'), 'Wow!  That''s really cool.', 
+        'Should capitalize the first letter of each sentence');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Mixed punctuation');
+    try
+      ExpectEqual(SentenceCase('what? are. you!  this,has.no!spaces?o'), 'What? Are. You!  This,has.No!Spaces?O',
+        'Should capitalize the first letter of each word after .!?');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** CopyFromTo Tests ***)
+  Describe('CopyFromTo');
+  try
+    Describe('Start index less than 1');
+    try
+      bCaughtException := false;
+      try
+        CopyFromTo('1234', -1, 2);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'CopyFromTo: Start index cannot be less than 1', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('End index < start index');
+    try
+      bCaughtException := false;
+      try
+        CopyFromTo('1234', 3, 1);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'CopyFromTo: End index cannot be less than the start index', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Start index = end index');
+    try
+      ExpectEqual(CopyFromTo('12345', 2, 2), '2', 'Should return the character at the index');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Start index > length of input string');
+    try
+      ExpectEqual(CopyFromTo('123', 4, 5), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('End index > length of input string');
+    try
+      ExpectEqual(CopyFromTo('12345', 3, 7), '345', 
+        'Should return a substring from the start index to the last valid index');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Full length of string');
+    try
+      ExpectEqual(CopyFromTo('abcdefg', 1, 7), 'abcdefg', 'Should return the input string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
@@ -247,6 +430,14 @@ begin
   Describe('Integer Helpers');
   try
     TestIntegerHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('String Helpers');
+  try
+    TestStringHelpers;
     Pass;
   except
     on x: Exception do Fail(x);
