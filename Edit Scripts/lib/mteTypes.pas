@@ -232,12 +232,17 @@ begin
   Result := '';
   bOpen := false;
   openIndex := 0;
+  
+  // loop through string looking for the open char
   for i := 1 to Length(str) do begin
     sChar := Copy(str, i, 1);
-    if not bOpen and (sChar = open) then begin
+    // if open char found, set openIndex and bOpen boolean
+    // if already opened reset open index if open <> close
+    if (sChar = open) and not (bOpen and (open = close)) then begin
       openIndex := i;
       bOpen := true;
     end
+    // if opened and we find the close char, set result and break
     else if bOpen and (sChar = close) then begin
       Result := CopyFromTo(str, openIndex + 1, i - 1);
       break;

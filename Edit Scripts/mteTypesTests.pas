@@ -411,6 +411,77 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (*** GetTextIn Tests ***)
+  Describe('GetTextIn');
+  try
+    Describe('Empty string');
+    try
+      ExpectEqual(GetTextIn('', '(', ')'), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('No delimiters present');
+    try
+      ExpectEqual(GetTextIn('Some string with no delims', '(', ')'), '',
+        'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Open delimiter, but no close delimiter');
+    try
+      ExpectEqual(GetTextIn('<This is never closed', '<', '>'), '',
+        'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Close delimiter, but no open delimiter');
+    try
+      ExpectEqual(GetTextIn('This> is never opened', '<', '>'), '',
+        'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Entire string is delimited');
+    try
+      ExpectEqual(GetTextIn('(I''m in parenthesis!)', '(', ')'), 'I''m in parenthesis!',
+        'Should return the string inside the delimiters');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Nested delimiters');
+    try
+      ExpectEqual(GetTextIn('[This [is a [triply] [nested] string]]', '[', ']'), 'triply', 
+        'Should return the most inner delimited text');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Open and close delimiters the same');
+    try
+      ExpectEqual(GetTextIn('Here is,a comma,separated text', ',', ','), 'a comma',
+        'Should return the text between two instances of the delimiter character');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
