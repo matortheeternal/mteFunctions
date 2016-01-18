@@ -136,19 +136,21 @@ end;
 }
 function TitleCase(sText: String): String;
 const
-  cDelimiters = [#9, #10, #13, ' ', ',', '.', ':', ';', '"',
-                 '\', '/', '(', ')', '[', ']', '{', '}'];
+  cDelimiters = #9#10#13' ,.:;"\/()[]{}';
 var
-  iLoop: Integer;
+  i: Integer;
 begin
-  Result := sText;
-  if (Result <> '') then begin
-    Result := LowerCase(Result);
-
-    Result[1] := UpCase(Result[1]);
-    for iLoop := 2 to Length(Result) do
-      if (Result[iLoop - 1] in cDelimiters) then
-        Result[iLoop] := UpCase(Result[iLoop]);
+  // set default result
+  Result := '';
+  
+  // if input isn't empty, loop through the characters in it
+  if (sText <> '') then begin
+    for i := 1 to Length(sText) do begin
+      sChar := LowerCase(Copy(sText, i, 1));
+      if (Pos(sChar, cDelimiters) > 0) then
+        sChar := UpCase(sChar);
+      Result := Result + sChar;
+    end;
   end;
 end;
 
@@ -164,22 +166,24 @@ end;
 }
 function SentenceCase(sText: string): string;
 const
-  cTerminators = ['!', '.', '?'];
+  cTerminators := '!.?';
 var
-  iLoop: Integer;
+  i: Integer;
   bTerminated: boolean;
 begin
-  Result := sText;
-  if (Result <> '') then begin
-    Result := LowerCase(Result);
-
-    Result[1] := UpCase(Result[1]);
+  // set result
+  Result := '';
+  
+  // if input isn't empty, loop through the characters in it
+  if (sText <> '') then begin
     bTerminated := false;
-    for iLoop := 2 to Length(Result) do begin
-      if (Result[iLoop - 1] in cTerminators) then
+    for i := 1 to Length(sText) do begin
+      sChar := LowerCase(Copy(sText, i, 1));
+      if (Pos(sChar, cTerminators) > 0) then
         bTerminated := true;
-      if bTerminated and (Result[iLoop] <> ' ') then
-        Result[iLoop] := UpCase(Result[iLoop]);
+      if bTerminated and (sChar <> ' ') then
+        sChar := UpCase(sChar);
+      Result := Result + sChar;
     end;
   end;
 end;
@@ -209,16 +213,18 @@ function GetTextIn(str: string; open, close: char): string;
 var
   i, openIndex: integer;
   bOpen: boolean;
+  sChar: string;
 begin
   Result := '';
   bOpen := false;
   openIndex := 0;
-  for i := 0 to Length(str) do begin
-    if not bOpen and (str[i] = open) then begin
+  for i := 1 to Length(str) do begin
+    sChar := Copy(str, i, 1);
+    if not bOpen and (sChar = open) then begin
       openIndex := i;
       bOpen := true;
     end
-    else if bOpen and (str[i] = close) then begin
+    else if bOpen and (sChar = close) then begin
       Result := CopyFromTo(str, openIndex + 1, i - 1);
       break;
     end;
@@ -253,8 +259,8 @@ end;
 
   Example usage:
   s := 'This is a sample string.';
-  Logger.Write(AppendIfMissing(s, 'string.')); //'This is a sample string.'
-  Logger.Write(AppendIfMissing(s, '  Hello.')); //'This is a sample string.  Hello.'
+  AddMessage(AppendIfMissing(s, 'string.')); //'This is a sample string.'
+  AddMessage(AppendIfMissing(s, '  Hello.')); //'This is a sample string.  Hello.'
 }
 function AppendIfMissing(str, substr: string): string;
 begin
@@ -278,30 +284,55 @@ begin
     Result := Copy(s1, 1, Length(s1) - Length(s2));
 end;
 
-{ Returns true if the string is an http:// or https:// url }
+{ 
+  IsUrl:
+  Returns true if the string @s is an http:// or https:// url.
+  
+  Example usage:
+  if IsUrl(s) then
+    ShellExecute(0, 'open', PChar(s), nil, nil , SW_SHOWNORMAL); 
+}
 function IsURL(s: string): boolean;
 begin
   Result := (Pos('http://', s) = 1) or (Pos('https://', s) = 1);
 end;
 
-{ Inserts line breaks in string @s before @charCount has been exceeded }
+{ 
+  Wordwrap:
+  Inserts line breaks in string @s before @charCount has been exceeded.
+  
+  Example usage:
+  s := 'Some very long string that probably should have line breaks '+
+    'in it because it's going to go off of your screen and mess '+
+    'up labels or hints or other such things if you don't wrap '+
+    'it.';
+  AddMessage(WordWrap(s, 60));
+  // 'Some very long string that probably should have line breaks '#13 +
+     'in it because it's going to go off of your screen and mess '#13 +
+     'up labels or hints or other such things if you don't wrap '#13 + 
+     'it.'
+}
 function Wordwrap(s: string; charCount: integer): string;
 var
   i, lastSpace, counter: Integer;
+  sChar: string;
 begin
   counter := 0;
   lastSpace := 0;
   for i := 1 to Length(s) - 1 do begin
     Inc(counter);
-    if (s[i] = ' ') or (s[i] = ',') then
+    sChar := Copy(s, i, 1);
+    sNextChar := Copy(s, i + 1, 1);
+    if (sChar = ' ') or (sChar = ',') then
       lastSpace := i;
-    if (s[i] = #13) or (s[i] = #10)
-    or (s[i + 1] = #13) or (s[i + 1] = #10) then begin
+    if (sChar = #13) or (sChar = #10)
+    or (sNextChar = #13) or (sNextChar = #10) then begin
       lastSpace := 0;
       counter := 0;
     end;
     if (counter = charCount) and (lastSpace > 0) then begin
       Insert(#13#10, s, lastSpace + 1);
+      Inc(i, 2);
       lastSpace := 0;
       counter := 0;
     end;
