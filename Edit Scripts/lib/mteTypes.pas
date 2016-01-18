@@ -57,8 +57,12 @@ end;
 function IntLog(Value, Base: Integer): Integer;
 begin
   Result := 0;
+  
+  // a base <= 1 is invalid when performing a logarithm
   if Base <= 1 then
     raise Exception.Create('IntLog: Base cannot be less than or equal to 1');
+    
+  // compute the logarithm by performing integer division repeatedly
   while Value >= Base do begin
     Value := Value div Base;
     Inc(Result);
@@ -72,11 +76,11 @@ end;
   NOTE:
   Currently xEdit scripting doesn't support an Int64 or Cardinal data
   type, so the maximum value this function can take is +2147483648,
-  which comes out to 1.99GB.
+  which comes out to 2.00GB.
   
   Example usage:
   AddMessage(FormatFileSize(5748224)); // '5.48 MB'
-  AddMessage(FormatFileSize(-2147483647)); // '-1.99 GB
+  AddMessage(FormatFileSize(-2147483647)); // '-2.00 GB
 }
 function FormatFileSize(const bytes: Integer): string;
 var
@@ -84,11 +88,16 @@ var
 var
   uIndex: Integer;
 begin
+  // initialize units array
   units[0] := 'bytes'; 
   units[1] := 'KB'; // Kilobyte, 10^3 bytes
   units[2] := 'MB'; // Megabyte, 10^6 bytes
   units[3] := 'GB';  // Gigabyte, 10^9 bytes
+  
+  // get unit to used based on the size of bytes
   uIndex := IntLog(abs(bytes), 1024);
+  
+  // return formatted file size string
   if (uIndex > 0) then
     Result := Format('%f %s', [bytes / IntPower(1024, uIndex), units[uIndex]])
   else
