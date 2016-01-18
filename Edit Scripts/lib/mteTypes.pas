@@ -330,4 +330,90 @@ begin
   Result := Format('%dd %dh %dm', [Trunc(date), HourOf(date), MinuteOf(date)]);
 end;
 
+
+{*****************************************************************************}
+{ Class Helpers
+  Functions for handling common classes like TStringLists and TLists.
+  
+  List of functions:
+  - IntegerListSum
+  - ContainsMatch
+  - SaveStringToFile
+  - ApplyTemplate
+  - TryToFree
+  - FreeList
+}
+{*****************************************************************************}
+
+{ Calculates the integer sum of all values in a TStringList to maxIndex }
+function IntegerListSum(list: TStringList; maxIndex: integer): integer;
+var
+  i: Integer;
+begin
+  Result := 0;
+  for i := 0 to maxIndex do
+    Inc(result, StrToInt(list[i]));
+end;
+
+{ Checks to see if any mask in @sl matches the string @s }
+function ContainsMatch(var sl: TStringList; const s: string): boolean;
+var
+  i: Integer;
+begin
+  Result := false;
+  for i := 0 to Pred(sl.Count) do
+    if MatchesMask(s, sl[i]) then begin
+      Result := true;
+      break;
+    end;
+end;
+
+{ Saves a string @s to a file at @fn }
+procedure SaveStringToFile(s: string; fn: string);
+var
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  sl.Text := s;
+  sl.SaveToFile(fn);
+  sl.Free;
+end;
+
+function ApplyTemplate(const template: string; var map: TStringList): string;
+const
+  openTag = '{{';
+  closeTag = '}}';
+var
+  i: Integer;
+  name, value: string;
+begin
+  Result := template;
+  for i := 0 to Pred(map.Count) do begin
+    name := map.Names[i];
+    value := map.ValueFromIndex[i];
+    Result := StringReplace(Result, openTag + name + closeTag, value, [rfReplaceAll]);
+  end;
+end;
+
+procedure TryToFree(obj: TObject);
+begin
+  if Assigned(obj) then try
+    obj.Free;
+  except
+    on x: Exception do // nothing
+  end;
+end;
+
+procedure FreeList(var lst: TList);
+var
+  i: Integer;
+  obj: TObject;
+begin
+  for i := Pred(lst.Count) downto 0 do begin
+    obj := TObject(lst[i]);
+    TryToFree(obj);
+  end;
+  lst.Free;
+end;
+
 end.
