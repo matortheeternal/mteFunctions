@@ -151,7 +151,7 @@ begin
     Describe('Positive Base');
     try
       ExpectEqual(IntLog(2, 2), 1, 'Should handle equality');
-      ExpectEqual(IntLog(4, 2), 2, 'Should handle perfect roots correctly');
+      ExpectEqual(IntLog(4, 2), 2, 'Should handle perfect logarithms correctly');
       ExpectEqual(IntLog(257, 2), 8, 'Should ignore small remainders correctly');
       ExpectEqual(IntLog(255, 2), 7, 'Should ignore large remainders correctly');
       ExpectEqual(IntLog(IntPower(1024, 3), 1024), 3, 'Should handle large values correctly');
@@ -165,6 +165,69 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  
+  (*** FormatFileSize Tests ***)
+  Describe('FormatFileSize');
+  try
+    Describe('Zero');
+    try
+      ExpectEqual(FormatFileSize(0), '0 bytes', 'Should return "0 bytes"');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Bytes');
+    try
+      ExpectEqual(FormatFileSize(-1), '-1 bytes', 'Lowest negative value should be -1 bytes');
+      ExpectEqual(FormatFileSize(1), '1 bytes', 'Lowest positive value should be 1 bytes');
+      ExpectEqual(FormatFileSize(1023), '1023 bytes', 'Upper limit should be 1023 bytes');
+      ExpectEqual(FormatFileSize(-1023), '-1023 bytes', 'Lower limit should be -1023 bytes');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Kilobytes');
+    try
+      ExpectEqual(FormatFileSize(-1024), '-1.00 KB', '-1024 bytes should equal -1.00 KB');
+      ExpectEqual(FormatFileSize(1024), '1.00 KB', '1024 bytes should equal 1.00 KB');
+      ExpectEqual(FormatFileSize(1024 * 1024 - 1), '1024.00 KB', 'Upper limit should be 1024.00 KB');
+      ExpectEqual(FormatFileSize(-1024 * 1024 + 1), '-1024.00 KB', 'Lower limit should be -1024.00 KB');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Megabytes');
+    try
+      ExpectEqual(FormatFileSize(-1048576), '-1.00 MB', '-1048576 bytes should equal -1.00 MB');
+      ExpectEqual(FormatFileSize(1048576), '1.00 MB', '1048576 bytes should equal 1.00 MB');
+      ExpectEqual(FormatFileSize(1024 * 1048576 - 1), '1024.00 MB', 'Upper limit should be 1024.00 MB');
+      ExpectEqual(FormatFileSize(-1024 * 1048576 + 1), '-1024.00 MB', 'Lower limit should be -1024.00 MB');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Gigabytes');
+    try
+      ExpectEqual(FormatFileSize(-1073741824), '-1.00 GB', '-1073741824 bytes should equal -1.00 GB');
+      ExpectEqual(FormatFileSize(1073741824), '1.00 GB', '1073741824 bytes should equal 1.00 GB');
+      ExpectEqual(FormatFileSize(2147483647), '2.00 GB', 'Upper limit should be 2.00 GB');
+      ExpectEqual(FormatFileSize(-2147483647), '-2.00 GB', 'Lower limit should be -2.00 GB');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
 end;
 
 { 

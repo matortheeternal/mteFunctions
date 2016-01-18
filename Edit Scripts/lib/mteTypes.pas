@@ -79,21 +79,20 @@ end;
   AddMessage(FormatFileSize(-2147483647)); // '-1.99 GB
 }
 function FormatFileSize(const bytes: Integer): string;
-const
-  units: array of string[0..3] = (
-    'bytes', 
-    'KB', // Kilobyte, 10^3 bytes
-    'MB', // Megabyte, 10^6 bytes
-    'GB'  // Gigabyte, 10^9 bytes
-  );
+var
+  units: array[0..3] of string;
 var
   uIndex: Integer;
 begin
+  units[0] := 'bytes'; 
+  units[1] := 'KB'; // Kilobyte, 10^3 bytes
+  units[2] := 'MB'; // Megabyte, 10^6 bytes
+  units[3] := 'GB';  // Gigabyte, 10^9 bytes
   uIndex := IntLog(abs(bytes), 1024);
   if (uIndex > 0) then
     Result := Format('%f %s', [bytes / IntPower(1024, uIndex), units[uIndex]])
   else
-    Result := Format('%f %s', [bytes, units[uIndex]]);
+    Result := Format('%d %s', [bytes, units[uIndex]]);
 end;
 
 end.
