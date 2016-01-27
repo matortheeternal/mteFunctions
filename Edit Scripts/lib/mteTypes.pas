@@ -313,6 +313,7 @@ end;
 }
 function IsURL(s: string): boolean;
 begin
+  s := Lowercase(s);
   Result := (Pos('http://', s) = 1) or (Pos('https://', s) = 1);
 end;
 
