@@ -598,6 +598,47 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** IsURL **)
+  Describe('IsURL');
+  try
+    Describe('http');
+    try
+      Expect(IsURL('http://www.google.com'), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('https');
+    try
+      Expect(IsURL('https://www.google.com'), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Case sensitivty');
+    try
+      Expect(IsURL('Https://www.google.com'), 'Should be case insensitive');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Unsupported protocol');
+    try
+      Expect(not IsURL('ftp://www.google.com'), 'Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
