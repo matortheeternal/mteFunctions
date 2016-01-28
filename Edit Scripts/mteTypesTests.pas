@@ -573,6 +573,31 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** RemoveFromEnd **)
+  Describe('RemoveFromEnd');
+  try
+    Describe('When missing');
+    try
+      ExpectEqual(RemoveFromEnd('Sample string', 'string '), 'Sample string', 'Should not remove');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('When present');
+    try
+      ExpectEqual(RemoveFromEnd('Sample string', ' string'), 'Sample', 'Should remove');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
