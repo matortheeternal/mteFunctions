@@ -482,6 +482,72 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** StrEndsWith **)
+  Describe('StrEndsWith');
+  try
+    Describe('Empty string');
+    try
+      Expect(StrEndsWith('', ''), 'Empty string ends with empty string');
+      Expect(not StrEndsWith('', 'a'), 'Empty string doesn''t end with non-empty string');
+      Expect(StrEndsWith('a', ''), 'String ends with empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Equality');
+    try
+      Expect(StrEndsWith('a', 'a'), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Inequality');
+    try
+      Expect(not StrEndsWith('a', 'b'), 'Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Second string longer than first');
+    try
+      Expect(not StrEndsWith('a', 'aa'), 'Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Valid');
+    try
+      Expect(StrEndsWith('This is a sample string.', 'string.'), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Invalid');
+    try
+      Expect(not StrEndsWith('This is a sample string.', 'b string.'), 
+        'Should return false when beginning differs');
+      Expect(not StrEndsWith('This is a sample string.', 'str1ng.'), 
+        'Should return false when middle differs');
+      Expect(not StrEndsWith('This is a sample string.', 'string. '), 
+        'Should return false when ending differs');
+      Expect(not StrEndsWith('This is a sample string.', 'STRING.'), 
+        'Should be case sensitive');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
