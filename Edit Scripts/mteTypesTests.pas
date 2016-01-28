@@ -548,6 +548,31 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** AppendIfMissing **)
+  Describe('AppendIfMissing');
+  try
+    Describe('When missing');
+    try
+      ExpectEqual(AppendIfMissing('Sample', ' string'), 'Sample string', 'Should append');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('When present');
+    try
+      ExpectEqual(AppendIfMissing('Sample string', ' string'), 'Sample string', 'Should not append');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
