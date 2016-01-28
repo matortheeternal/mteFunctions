@@ -639,6 +639,61 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** Wordwrap **)
+  Describe('Wordwrap');
+  try
+    Describe('Empty string');
+    try
+      ExpectEqual(Wordwrap('', 1), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Words longer than character limit');
+    try
+      ExpectEqual(Wordwrap('This is a test', 3), 'This '#13#10'is '#13#10'a '#13#10'test', 
+        'Should insert a newline after each word');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Never reach character limit');
+    try
+      ExpectEqual(Wordwrap('This is a test', 15), 'This is a test', 
+        'Should not insert any newlines');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Multiple multi-word lines');
+    try
+      ExpectEqual(Wordwrap('This is a test of multiple lines being wrapped', 9), 
+        'This is a '#13#10'test of '#13#10'multiple '#13#10'lines '#13#10'being '#13#10'wrapped', 
+        'Should insert newlines in correct locations');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Lines that are already wrapped');
+    try
+      ExpectEqual(Wordwrap('This is a '#13#10'test of '#13#10'multiple '#13#10'lines '#13#10'being '#13#10'wrapped', 9), 
+        'This is a '#13#10'test of '#13#10'multiple '#13#10'lines '#13#10'being '#13#10'wrapped', 
+        'Should not insert more newlines');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 

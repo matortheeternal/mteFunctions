@@ -333,30 +333,57 @@ end;
      'it.'
 }
 function Wordwrap(s: string; charCount: integer): string;
+const
+  bDebugThis = false;
 var
-  i, lastSpace, counter: Integer;
-  sChar: string;
+  i, j, lastSpace, counter: Integer;
+  sChar, sNextChar: string;
 begin
+  // initialize variables
   counter := 0;
   lastSpace := 0;
-  for i := 1 to Length(s) - 1 do begin
+  i := 1;
+  
+  // debug message
+  if bDebugThis then AddMessage(Format('Called Wordwrap(%s, %d)', [s, charCount]));
+  
+  // loop for every character except the last one
+  while (i < Length(s)) do begin
+    // increment the counter for characters on the line and get the character
+    // at the current position and the next position
     Inc(counter);
     sChar := Copy(s, i, 1);
     sNextChar := Copy(s, i + 1, 1);
+    
+    // debug message
+    if bDebugThis then AddMessage(Format('  [%d] Counter = %d, Char = %s', [i, counter, sChar]));
+    
+    // track the position of the last space we've seen
     if (sChar = ' ') or (sChar = ',') then
       lastSpace := i;
+      
+    // if we encounter a new line, reset the counter for the characters on the line
+    // also don't make a new line if the next character is a newline character
     if (sChar = #13) or (sChar = #10)
     or (sNextChar = #13) or (sNextChar = #10) then begin
       lastSpace := 0;
       counter := 0;
     end;
-    if (counter = charCount) and (lastSpace > 0) then begin
+    
+    // if we've exceeded the number of characters allowed on the line and we've seen
+    // a space on the line, insert a line break at the space and reset the counter
+    if (counter > charCount) and (lastSpace > 0) then begin
       Insert(#13#10, s, lastSpace + 1);
-      Inc(i, 2);
+      counter := i - lastSpace;
       lastSpace := 0;
-      counter := 0;
+      i := i + 2;
     end;
+    
+    // proceed to next character in the while loop
+    Inc(i);
   end;
+  
+  // return the modified string
   Result := s;
 end;
 
