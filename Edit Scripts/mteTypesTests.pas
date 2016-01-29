@@ -1009,6 +1009,79 @@ begin
 end;
 
 {
+  TestColorHelpers:
+  Tests color helper functions in mteTypes.
+}
+procedure TestColorHelpers;
+begin
+  (*** GetRValue ***)
+  Describe('GetRValue');
+  try
+    ExpectEqual(GetRValue(clBlack), $00, 'clBlack red value = $00');
+    ExpectEqual(GetRValue(clWhite), $FF, 'clWhite red value = $FF');
+    ExpectEqual(GetRValue(clGray), $80, 'clGray red value = $80');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** GetGValue ***)
+  Describe('GetGValue');
+  try
+    ExpectEqual(GetGValue(clBlack), $00, 'clBlack green value = $00');
+    ExpectEqual(GetGValue(clWhite), $FF, 'clWhite green value = $FF');
+    ExpectEqual(GetGValue(clGray), $80, 'clGray green value = $80');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** GetBValue ***)
+  Describe('GetBValue');
+  try
+    ExpectEqual(GetBValue(clBlack), $00, 'clBlack blue value = $00');
+    ExpectEqual(GetBValue(clWhite), $FF, 'clWhite blue value = $FF');
+    ExpectEqual(GetBValue(clGray), $80, 'clGray blue value = $80');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** RGB ***)
+  Describe('RGB');
+  try
+    ExpectEqual(RGB(0, 0, 0), clBlack, '0, 0, 0 should be clBlack');
+    ExpectEqual(RGB(255, 255, 255), clWhite, '255, 255, 255 should be clWhite');
+    ExpectEqual(RGB(128, 128, 128), clGray, '80, 80, 80 should be clGray');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** ColorToHex ***)
+  Describe('ColorToHex');
+  try
+    ExpectEqual(ColorToHex(clBlack), '000000', 'clBlack should be "000000"');
+    ExpectEqual(ColorToHex(clWhite), 'FFFFFF', 'clWhite should be "FFFFFF"');
+    ExpectEqual(ColorToHex(clGray), '808080', 'clGray should be "808080"');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (*** HexToColor ***)
+  Describe('HexToColor');
+  try
+    ExpectEqual(HexToColor('000000'), clBlack, '"000000" should be clBlack');
+    ExpectEqual(HexToColor('FFFFFF'), clWhite, '"FFFFFF" should be clWhite');
+    ExpectEqual(HexToColor('808080'), clGray, '"808080" should be clGray');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
+
+{
   TestClassHelpers:
   Tests class helper functions in mteTypes.
 }
@@ -1293,6 +1366,14 @@ begin
   Describe('Date and Time Helpers');
   try
     TestDateAndTimeHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Color Helpers');
+  try
+    TestColorHelpers;
     Pass;
   except
     on x: Exception do Fail(x);

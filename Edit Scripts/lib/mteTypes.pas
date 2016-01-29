@@ -8,9 +8,177 @@
 unit mteTypes;
 
 const
+  // Times
   aDay = 1.0;
   aHour = aDay / 24.0;
   aMinute = aHour / 60.0;
+  
+  // Colors
+  clAqua = $FFFF00;
+  clBlack = $000000;
+  clBlue = $FF0000;
+  clCream = $F0FBFF;
+  clDkGray = $808080;
+  clFuchsia = $FF00FF;
+  clGray = $808080;
+  clGreen = $008000;
+  clLime = $00FF00;
+  clLtGray = $C0C0C0;
+  clMaroon = $000080;
+  clMedGray = $A4A0A0;
+  clMoneyGreen = $C0DCC0;
+  clNavy = $800000;
+  clOlive = $008080;
+  clPurple = $800080;
+  clRed = $0000FF;
+  clSilver = $C0C0C0;
+  clSkyBlue = $F0CAA6;
+  clTeal = $808000;
+  clWhite = $FFFFFF;
+  clYellow = $00FFFF;
+  
+  // Web Colors
+  clWebSnow = $FAFAFF;
+  clWebFloralWhite = $F0FAFF;
+  clWebLavenderBlush = $F5F0FF;
+  clWebOldLace = $E6F5FD;
+  clWebIvory = $F0FFFF;
+  clWebCornSilk = $DCF8FF;
+  clWebBeige = $DCF5F5;
+  clWebAntiqueWhite = $D7EBFA;
+  clWebWheat = $B3DEF5;
+  clWebAliceBlue = $FFF8F0;
+  clWebGhostWhite = $FFF8F8;
+  clWebLavender = $FAE6E6;
+  clWebSeashell = $EEF5FF;
+  clWebLightYellow = $E0FFFF;
+  clWebPapayaWhip = $D5EFFF;
+  clWebNavajoWhite = $ADDEFF;
+  clWebMoccasin = $B5E4FF;
+  clWebBurlywood = $87B8DE;
+  clWebAzure = $FFFFF0;
+  clWebMintcream = $FAFFF5;
+  clWebHoneydew = $F0FFF0;
+  clWebLinen = $E6F0FA;
+  clWebLemonChiffon = $CDFAFF;
+  clWebBlanchedAlmond = $CDEBFF;
+  clWebBisque = $C4E4FF;
+  clWebPeachPuff = $B9DAFF;
+  clWebTan = $8CB4D2;
+  clWebYellow = $00FFFF;
+  clWebDarkOrange = $008CFF;
+  clWebRed = $0000FF;
+  clWebDarkRed = $00008B;
+  clWebMaroon = $000080;
+  clWebIndianRed = $5C5CCD;
+  clWebSalmon = $7280FA;
+  clWebCoral = $507FFF;
+  clWebGold = $00D7FF;
+  clWebTomato = $4763FF;
+  clWebCrimson = $3C14DC;
+  clWebBrown = $2A2AA5;
+  clWebChocolate = $1E69D2;
+  clWebSandyBrown = $60A4F4;
+  clWebLightSalmon = $7AA0FF;
+  clWebLightCoral = $8080F0;
+  clWebOrange = $00A5FF;
+  clWebOrangeRed = $0045FF;
+  clWebFirebrick = $2222B2;
+  clWebSaddleBrown = $13458B;
+  clWebSienna = $2D52A0;
+  clWebPeru = $3F85CD;
+  clWebDarkSalmon = $7A96E9;
+  clWebRosyBrown = $8F8FBC;
+  clWebPaleGoldenrod = $AAE8EE;
+  clWebLightGoldenrodYellow = $D2FAFA;
+  clWebOlive = $008080;
+  clWebForestGreen = $228B22;
+  clWebGreenYellow = $2FFFAD;
+  clWebChartreuse = $00FF7F;
+  clWebLightGreen = $90EE90;
+  clWebAquamarine = $D4FF7F;
+  clWebSeaGreen = $578B2E;
+  clWebGoldenRod = $20A5DA;
+  clWebKhaki = $8CE6F0;
+  clWebOliveDrab = $238E6B;
+  clWebGreen = $008000;
+  clWebYellowGreen = $32CD9A;
+  clWebLawnGreen = $00FC7C;
+  clWebPaleGreen = $98FB98;
+  clWebMediumAquamarine = $AACD66;
+  clWebMediumSeaGreen = $71B33C;
+  clWebDarkGoldenRod = $0B86B8;
+  clWebDarkKhaki = $6BB7BD;
+  clWebDarkOliveGreen = $2F6B55;
+  clWebDarkgreen = $006400;
+  clWebLimeGreen = $32CD32;
+  clWebLime = $00FF00;
+  clWebSpringGreen = $7FFF00;
+  clWebMediumSpringGreen = $9AFA00;
+  clWebDarkSeaGreen = $8FBC8F;
+  clWebLightSeaGreen = $AAB220;
+  clWebPaleTurquoise = $EEEEAF;
+  clWebLightCyan = $FFFFE0;
+  clWebLightBlue = $E6D8AD;
+  clWebLightSkyBlue = $FACE87;
+  clWebCornFlowerBlue = $ED9564;
+  clWebDarkBlue = $8B0000;
+  clWebIndigo = $82004B;
+  clWebMediumTurquoise = $CCD148;
+  clWebTurquoise = $D0E040;
+  clWebCyan = $FFFF00;
+  clWebAqua = $FFFF00;
+  clWebPowderBlue = $E6E0B0;
+  clWebSkyBlue = $EBCE87;
+  clWebRoyalBlue = $E16941;
+  clWebMediumBlue = $CD0000;
+  clWebMidnightBlue = $701919;
+  clWebDarkTurquoise = $D1CE00;
+  clWebCadetBlue = $A09E5F;
+  clWebDarkCyan = $8B8B00;
+  clWebTeal = $808000;
+  clWebDeepskyBlue = $FFBF00;
+  clWebDodgerBlue = $FF901E;
+  clWebBlue = $FF0000;
+  clWebNavy = $800000;
+  clWebDarkViolet = $D30094;
+  clWebDarkOrchid = $CC3299;
+  clWebMagenta = $FF00FF;
+  clWebFuchsia = $FF00FF;
+  clWebDarkMagenta = $8B008B;
+  clWebMediumVioletRed = $8515C7;
+  clWebPaleVioletRed = $9370DB;
+  clWebBlueViolet = $E22B8A;
+  clWebMediumOrchid = $D355BA;
+  clWebMediumPurple = $DB7093;
+  clWebPurple = $800080;
+  clWebDeepPink = $9314FF;
+  clWebLightPink = $C1B6FF;
+  clWebViolet = $EE82EE;
+  clWebOrchid = $D670DA;
+  clWebPlum = $DDA0DD;
+  clWebThistle = $D8BFD8;
+  clWebHotPink = $B469FF;
+  clWebPink = $CBC0FF;
+  clWebLightSteelBlue = $DEC4B0;
+  clWebMediumSlateBlue = $EE687B;
+  clWebLightSlateGray = $998877;
+  clWebWhite = $FFFFFF;
+  clWebLightgrey = $D3D3D3;
+  clWebGray = $808080;
+  clWebSteelBlue = $B48246;
+  clWebSlateBlue = $CD5A6A;
+  clWebSlateGray = $908070;
+  clWebWhiteSmoke = $F5F5F5;
+  clWebSilver = $C0C0C0;
+  clWebDimGray = $696969;
+  clWebMistyRose = $E1E4FF;
+  clWebDarkSlateBlue = $8B3D48;
+  clWebDarkSlategray = $4F4F2F;
+  clWebGainsboro = $DCDCDC;
+  clWebDarkGray = $A9A9A9;
+  clWebBlack = $000000;
+  
 
 {*****************************************************************************}
 { Boolean Helpers
@@ -620,11 +788,63 @@ end;
 
 
 {*****************************************************************************}
+{ Color Helpers
+  Functions for handling Colors.
+  
+  List of functions:
+  - GetRValue
+  - GetGValue
+  - GetBValue
+  - RGB
+  - ColorToHex
+  - HexToColor
+}
+{*****************************************************************************}
+
+function GetRValue(rgb: Integer): Byte;
+begin
+  Result := Byte(rgb);
+end;
+
+function GetGValue(rgb: Integer): Byte;
+begin
+  Result := Byte(rgb shr 8);
+end;
+
+function GetBValue(rgb: Integer): Byte;
+begin
+  Result := Byte(rgb shr 16);
+end;
+
+function RGB(r, g, b: Byte): Integer;
+begin
+  Result := (r or (g shl 8) or (b shl 16));
+end;
+
+function ColorToHex(Color: Integer): string;
+begin
+   Result :=
+     IntToHex(GetRValue(Color), 2) +
+     IntToHex(GetGValue(Color), 2) +
+     IntToHex(GetBValue(Color), 2);
+end;
+
+function HexToColor(sColor : string): Integer;
+begin
+   Result :=
+     RGB(
+       StrToInt('$'+Copy(sColor, 1, 2)),
+       StrToInt('$'+Copy(sColor, 3, 2)),
+       StrToInt('$'+Copy(sColor, 5, 2))
+     );
+end;
+
+
+{*****************************************************************************}
 { Class Helpers
   Functions for handling common classes like TStringLists and TLists.
   
   List of functions:
-  - ColorToInt
   - IntegerListSum
   - SaveStringToFile
   - LoadStringFromFile
@@ -633,21 +853,6 @@ end;
   - TryToFree
 }
 {*****************************************************************************}
-
-{
-  ColorToInt:
-  Returns an integer corresponding to an input RGB color.
-  
-  Example usage:
-  color.Red := $FF;
-  color.Green := $FF;
-  color.Blue := $FF;
-  AddMessage(IntToStr(ColorToInt(color.Red, color.Green, color.Blue))); // 16777215
-}
-function ColorToInt(red: integer; green: integer; blue: integer): integer;
-begin
-  Result := blue * 65536 + green * 256 + red;
-end;
 
 { 
   IntegerListSum:
