@@ -950,7 +950,7 @@ begin
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
