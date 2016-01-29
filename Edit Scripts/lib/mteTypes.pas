@@ -3,12 +3,6 @@
   
   General helpers for mteFunctions.
   See http://github.com/matortheeternal/mteFunctions
-  
-  - Matches
-  - ReverseStr
-  - ItPos
-  - rPos
-  - DelimitedTextBetween
 }
 
 unit mteTypes;
@@ -139,12 +133,22 @@ end;
   - TitleCase
   - SentenceCase
   - CopyFromTo
+  - ReverseString
   - GetTextIn
   - StrEndsWith
   - AppendIfMissing
   - RemoveFromEnd
   - IsURL
   - Wordwrap
+  
+  TODO:
+  - Matches
+  - ItPos
+  - rPos
+  - DelimitedTextBetween
+  - StrStartsWith
+  - PrependIfMissing
+  - RemoveFromStart
 }
 {*****************************************************************************}
 
@@ -239,6 +243,25 @@ begin
   if iEnd < iStart then
     raise Exception.Create('CopyFromTo: End index cannot be less than the start index');
   Result := Copy(str, iStart, (iEnd - iStart) + 1);
+end;
+
+{
+  ReverseString:
+  Reverses the input string @s.
+  
+  Example usage:
+  s := 'backwards';
+  s := ReverseString(s);
+  AddMessage(s); // 'sdrawkcab'
+}
+function ReverseString(var s: string): string;
+var
+  i: integer;
+begin
+   Result := '';
+   for i := Length(s) downto 1 do begin
+     Result := Result + Copy(s, i, 1);
+   end;
 end;
 
 { 

@@ -422,6 +422,39 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (*** ReverseString Tests ***)
+  Describe('ReverseString');
+  try
+    Describe('Empty string');
+    try
+      ExpectEqual(ReverseString(''), '', 'Should return an empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Single character string');
+    try
+      ExpectEqual(ReverseString('a'), 'a', 'Should return the same string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Multiple character string');
+    try
+      ExpectEqual(ReverseString('backwards'), 'sdrawkcab', 'Should reverse the string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
   (*** GetTextIn Tests ***)
   Describe('GetTextIn');
   try
