@@ -636,12 +636,10 @@ end;
   - ColorToInt
   - IntegerListSum
   - SaveStringToFile
+  - LoadStringFromFile
   - ApplyTemplate
   - FreeAndNil
   - TryToFree
-  
-  TODO:
-  - LoadStringFromFile
 }
 {*****************************************************************************}
 
@@ -694,6 +692,24 @@ begin
   try
     sl.Text := s;
     sl.SaveToFile(fn);
+  finally
+    sl.Free;
+  end;
+end;
+
+{ 
+  LoadStringFromFile:
+  Loads a the file at @fn and returns its contents as a string
+}
+function LoadStringFromFile(fn: string): String;
+var
+  sl: TStringList;
+begin
+  Result := '';
+  sl := TStringList.Create;
+  try
+    sl.LoadFromFile(fn);
+    Result := sl.Text;
   finally
     sl.Free;
   end;

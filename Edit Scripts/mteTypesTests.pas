@@ -1195,6 +1195,25 @@ begin
     end;
   end;
   
+  (** LoadStringFromFile Tests **)
+  Describe('LoadStringFromFile');
+  try
+    sl := TStringList.Create;
+    sl.Add('This is an example string');
+    sl.SavetoFile('MTE-TestFile.txt');
+    FreeAndNil(sl);
+    s := '';
+    s := LoadStringFromFile('MTE-TestFile.txt');
+    ExpectEqual(s, 'This is an example string'#13#10, 
+      'The loaded string should match the file contents');
+    Pass;
+  except
+    on x: Exception do begin
+      if Assigned(sl) then FreeAndNil(sl);
+      Fail(x);
+    end;
+  end;
+  
   (** ApplyTemplate Tests **)
   Describe('ApplyTemplate');
   try
