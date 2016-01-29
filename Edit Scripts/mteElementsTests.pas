@@ -73,7 +73,8 @@ begin
   Describe('etToString');
   try
     ExpectEqual(etToString(etFile), 'etFile', 'etFile should return "etFile"');
-    ExpectEqual(etToString(etSubRecordUnion), 'etSubRecordUnion', 'etSubRecordUnion should return "etSubRecordUnion"');
+    ExpectEqual(etToString(etSubRecordUnion), 'etSubRecordUnion', 
+      'etSubRecordUnion should return "etSubRecordUnion"');
     ExpectEqual(etToString(etUnion), 'etUnion', 'etUnion should return "etUnion"');
     Pass;
   except
@@ -96,7 +97,8 @@ begin
   try
     ExpectEqual(ctToString(ctUnknown), 'ctUnknown', 'ctUnknown should return "ctUnknown"');
     ExpectEqual(ctToString(ctMaster), 'ctMaster', 'ctMaster should return "ctMaster"');
-    ExpectEqual(ctToString(ctConflictLoses), 'ctConflictLoses', 'ctConflictLoses should return "ctConflictLoses"');
+    ExpectEqual(ctToString(ctConflictLoses), 'ctConflictLoses', 
+      'ctConflictLoses should return "ctConflictLoses"');
     Pass;
   except
     on x: Exception do Fail(x);
@@ -125,7 +127,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictThis: Input element is not assigned', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictThis: Input element is not assigned', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -143,7 +146,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictThis: etFile does not have a ConflictThis', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictThis: etFile does not have a ConflictThis', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -179,7 +183,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictThis: etGroupRecord does not have a ConflictThis', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictThis: etGroupRecord does not have a ConflictThis', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -196,14 +201,16 @@ begin
       JumpTo(rec, false);
       element := ElementByPath(rec, 'DATA');
       sActual := ctToString(ConflictThis(element));
-      ExpectEqual(sActual, 'ctConflictLoses', 'Should return ctConflictLoses for an element in a losing override record');
+      ExpectEqual(sActual, 'ctConflictLoses', 
+        'Should return ctConflictLoses for an element in a losing override record');
       
       // test with an itm element
       rec := RecordByIndex(f, 1);
       JumpTo(rec, false);
       element := ElementByPath(rec, 'ZNAM');
       sActual := ctToString(ConflictThis(element));
-      ExpectEqual(sActual, 'ctIdenticalToMaster', 'Should return ctIdenticalToMaster for an element in an ITM record');
+      ExpectEqual(sActual, 'ctIdenticalToMaster', 
+        'Should return ctIdenticalToMaster for an element in an ITM record');
       
       Pass;
     except
@@ -228,7 +235,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictAll: Input element is not assigned', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictAll: Input element is not assigned', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -246,7 +254,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictAll: etFile does not have a ConflictAll', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictAll: etFile does not have a ConflictAll', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -282,7 +291,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ConflictAll: etGroupRecord does not have a ConflictAll', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ConflictAll: etGroupRecord does not have a ConflictAll', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -332,7 +342,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a file', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a file', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -352,7 +363,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a main record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a main record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -371,7 +383,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a group record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'ElementPath: Cannot call ElementPath on a group record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -393,7 +406,8 @@ begin
       // test with a second level element
       element := ElementByPath(rec, 'ENIT\Value');
       sActual := ElementPath(element);
-      ExpectEqual(sActual, 'ENIT - Effect Data\Value', 'Should return the correct path for a second level element');
+      ExpectEqual(sActual, 'ENIT - Effect Data\Value', 
+        'Should return the correct path for a second level element');
       
       // test with a array element
       element := ElementByPath(rec, 'Effects');
@@ -406,7 +420,8 @@ begin
       element := ElementByIndex(element, 1);
       element := ElementByPath(element, 'EFIT - \Magnitude');
       sActual := ElementPath(element);
-      ExpectEqual(sActual, 'Effects\Effect\EFIT - \Magnitude', 'Should return the correct path for an element in an array element');
+      ExpectEqual(sActual, 'Effects\Effect\EFIT - \Magnitude', 
+        'Should return the correct path for an element in an array element');
       
       Pass;
     except
@@ -432,7 +447,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a file', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a file', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -452,7 +468,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a main record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a main record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -471,7 +488,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a group record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'IndexedPath: Cannot call IndexedPath on a group record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -493,7 +511,8 @@ begin
       // test with a second level element
       element := ElementByPath(rec, 'ENIT\Value');
       sActual := IndexedPath(element);
-      ExpectEqual(sActual, 'ENIT - Effect Data\Value', 'Should return the correct path for a second level element');
+      ExpectEqual(sActual, 'ENIT - Effect Data\Value', 
+        'Should return the correct path for a second level element');
       
       // test with an array element
       element := ElementByPath(rec, 'Effects');
@@ -506,7 +525,8 @@ begin
       element := ElementByIndex(element, 1);
       element := ElementByPath(element, 'EFIT - \Magnitude');
       sActual := IndexedPath(element);
-      ExpectEqual(sActual, 'Effects\[1]\EFIT - \Magnitude', 'Should return the correct path for an element in an array element');
+      ExpectEqual(sActual, 'Effects\[1]\EFIT - \Magnitude', 
+        'Should return the correct path for an element in an array element');
       
       Pass;
     except
@@ -532,7 +552,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a file', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a file', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -552,7 +573,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a main record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a main record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -571,7 +593,8 @@ begin
       except
         on x: Exception do begin
           bCaughtException := true;
-          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a group record', 'Should raise the correct exception');
+          ExpectEqual(x.Message, 'MoveElementToIndex: Cannot call MoveElementToIndex on a group record', 
+            'Should raise the correct exception');
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
@@ -620,7 +643,8 @@ begin
       MoveElementToIndex(element, 0);
       ExpectEqual(IndexOf(GetContainer(element), element), 0, 'Should move the element to index 0');
       MoveElementToIndex(element, iMaxIndex);
-      ExpectEqual(IndexOf(GetContainer(element), element), iMaxIndex, 'Should move the element to index '+IntToStr(iMaxIndex));
+      ExpectEqual(IndexOf(GetContainer(element), element), iMaxIndex, 
+        'Should move the element to index '+IntToStr(iMaxIndex));
       Pass;
     except
       on x: Exception do Fail(x);
@@ -633,9 +657,11 @@ begin
       iMaxIndex := ElementCount(element) - 1;
       element := ElementByIndex(element, 2);
       MoveElementToIndex(element, -20);
-      ExpectEqual(IndexOf(GetContainer(element), element), 0, 'Index < MinIndex: Should move the element to index MinIndex');
+      ExpectEqual(IndexOf(GetContainer(element), element), 0, 
+        'Index < MinIndex: Should move the element to index MinIndex');
       MoveElementToIndex(element, iMaxIndex + 20);
-      ExpectEqual(IndexOf(GetContainer(element), element), iMaxIndex, 'Index > MaxIndex: Should move the element to index MaxIndex');
+      ExpectEqual(IndexOf(GetContainer(element), element), iMaxIndex, 
+        'Index > MaxIndex: Should move the element to index MaxIndex');
       Pass;
     except
       on x: Exception do Fail(x);
