@@ -423,6 +423,28 @@ begin
   if StrEndsWith(str, substr) then
     Result := Copy(str, 1, Length(str) - Length(substr));
 end;
+
+{
+  StrStartsWith:
+  Checks to see if a string starts with an entered substring.
+
+  Example usage:
+  s := 'This is a sample string.';
+  if StrStartsWith(s, 'This ') then
+    AddMessage('It works!');
+}
+function StrStartsWith(str, substr: string): boolean;
+var
+  n1, n2: integer;
+begin
+  Result := false;
+
+  n1 := Length(str);
+  n2 := Length(substr);
+  if n1 < n2 then exit;
+
+  Result := (Copy(str, 1, n2) = substr);
+end;
 end;
 
 { 

@@ -744,6 +744,72 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (** StrStartsWith Tests **)
+  Describe('StrStartsWith');
+  try
+    Describe('Empty string');
+    try
+      Expect(StrStartsWith('', ''), 'Empty string starts with empty string');
+      Expect(not StrStartsWith('', 'a'), 'Empty string doesn''t start with non-empty string');
+      Expect(StrStartsWith('a', ''), 'String starts with empty string');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Equality');
+    try
+      Expect(StrStartsWith('a', 'a'), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Inequality');
+    try
+      Expect(not StrStartsWith('a', 'b'), 'Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Second string longer than first');
+    try
+      Expect(not StrStartsWith('a', 'aa'), 'Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Valid');
+    try
+      Expect(StrStartsWith('This is a sample string.', 'This '), 'Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Invalid');
+    try
+      Expect(not StrStartsWith('This is a sample string.', 'This b'), 
+        'Should return false when end differs');
+      Expect(not StrStartsWith('This is a sample string.', 'Th1s '), 
+        'Should return false when middle differs');
+      Expect(not StrStartsWith('This is a sample string.', ' This'), 
+        'Should return false when start differs');
+      Expect(not StrStartsWith('This is a sample string.', 'THIS '), 
+        'Should be case sensitive');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
   (** IsURL Tests **)
   Describe('IsURL');
   try
