@@ -691,6 +691,19 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** HourOf **)
+  Describe('HourOf');
+  try
+    ExpectEqual(HourOf(0.0), 0, '0.0 should return 0');
+    ExpectEqual(HourOf(1.0 * aHour), 1, '1.0 hour should return 1');
+    ExpectEqual(HourOf(1.99999 * aHour), 1, '1.99999 hours should return 1');
+    ExpectEqual(HourOf(23.999 * aHour), 23, '23.999 hours should return 23');
+    ExpectEqual(HourOf(24.0 * aHour), 0, '24.0 hours should return 0');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 

@@ -399,6 +399,7 @@ end;
   
   List of functions:
   - DayOf
+  - HourOf
   - RateStr
   - TimeStr
 }
@@ -408,6 +409,12 @@ end;
 function DayOf(date: TDateTime): Integer;
 begin
   Result := Trunc(date);
+end;
+
+{ Returns the hour portion of a TDateTime as an integer }
+function HourOf(date: TDateTime): Integer;
+begin
+  Result := Trunc(date / aHour) mod 24;
 end;
 
 { Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
