@@ -454,8 +454,6 @@ end;
   - IntegerListSum
   - SaveStringToFile
   - ApplyTemplate
-  - TryToFree
-  - FreeList
 }
 {*****************************************************************************}
 
@@ -503,27 +501,6 @@ begin
     value := map.ValueFromIndex[i];
     Result := StringReplace(Result, openTag + name + closeTag, value, [rfReplaceAll]);
   end;
-end;
-
-procedure TryToFree(obj: TObject);
-begin
-  if Assigned(obj) then try
-    obj.Free;
-  except
-    on x: Exception do // nothing
-  end;
-end;
-
-procedure FreeList(var lst: TList);
-var
-  i: Integer;
-  obj: TObject;
-begin
-  for i := Pred(lst.Count) downto 0 do begin
-    obj := TObject(lst[i]);
-    TryToFree(obj);
-  end;
-  lst.Free;
 end;
 
 end.
