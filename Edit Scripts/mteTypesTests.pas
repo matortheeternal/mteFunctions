@@ -674,6 +674,25 @@ begin
   end;
 end;
 
+{
+  TestDateAndTimeHelpers:
+  Tests the date and time helper functions in mteTypes.
+}
+procedure TestDateAndTimeHelpers;
+begin
+  (** DayOf **)
+  Describe('DayOf');
+  try
+    ExpectEqual(DayOf(0.0), 0, '0.0 should return 0');
+    ExpectEqual(DayOf(1.0), 1, '1.0 should return 1');
+    ExpectEqual(DayOf(1.999999), 1, '1.999999 should return 1');
+    ExpectEqual(DayOf(123456.7890), 123456, '123456.7890 should return 123456');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
+
 { 
   TestMteTypes:
   Tests the functions in mteTypes using the jvTest framework.
@@ -699,6 +718,14 @@ begin
   Describe('String Helpers');
   try
     TestStringHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Date and Time Helpers');
+  try
+    TestDateAndTimeHelpers;
     Pass;
   except
     on x: Exception do Fail(x);

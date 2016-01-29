@@ -9,6 +9,11 @@ unit mteTypes;
 
 uses 'lib\mteBase';
 
+const
+  aDay = 1.0;
+  aHour = aDay / 24.0;
+  aMinute = aHour / 60.0;
+
 {*****************************************************************************}
 { Boolean Helpers
   Functions for handling and converting booleans.
@@ -393,10 +398,17 @@ end;
   Functions for handling dates and times.
   
   List of functions:
+  - DayOf
   - RateStr
   - TimeStr
 }
 {*****************************************************************************}
+
+{ Returns the day portion of a TDateTime as an integer }
+function DayOf(date: TDateTime): Integer;
+begin
+  Result := Trunc(date);
+end;
 
 { Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
 function RateStr(date: TDateTime): string;
