@@ -7,11 +7,6 @@
 
 unit mteTypes;
 
-type
-  TColor = Record
-    red, green, blue: integer;
-  end;
-
 const
   aDay = 1.0;
   aHour = aDay / 24.0;
