@@ -9,13 +9,13 @@ mteFunctions has a full suite of tests, created using [jvTest](https://github.co
 
 ## Progress
 
-| Section       | Percent Complete |
-|---------------|------------------|
-| Documentation | 0%               |
-| mteBase       | 100%             |
-| mteFiles      | 95%              |
-| mteElements   | 75%              |
-| mteRecords    | 5%               |
-| mteTypes      | 100%             |
-| mteGUI        | 0%               |
-| mteSystem     | 5%               |
+| Section       | Percent Complete                          |
+|---------------|-------------------------------------------|
+| Documentation | ![Progress](http://progressed.io/bar/0)   |
+| mteBase       | ![Progress](http://progressed.io/bar/100) |
+| mteFiles      | ![Progress](http://progressed.io/bar/95)  |
+| mteElements   | ![Progress](http://progressed.io/bar/75)  |
+| mteRecords    | ![Progress](http://progressed.io/bar/5)   |
+| mteTypes      | ![Progress](http://progressed.io/bar/100) |
+| mteGUI        | ![Progress](http://progressed.io/bar/0)   |
+| mteSystem     | ![Progress](http://progressed.io/bar/5)   |
