@@ -344,6 +344,86 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (*** ItPos ***)
+  Describe('ItPos');
+  try
+    Describe('Target is less than 1');
+    try
+      ExpectEqual(ItPos('b', 'aba', 0), 0, 'Should return 0');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Search String is empty');
+    try
+      ExpectEqual(ItPos('a', '', 1), 0, 'Should return 0');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Substring is empty');
+    try
+      ExpectEqual(ItPos('', 'hi', 2), 0, 'Should return 0');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Equal, single character');
+    try
+      ExpectEqual(ItPos('a', 'a', 1), 1, 'Should return 1 if target iteration is 1');
+      ExpectEqual(ItPos('a', 'a', 2), 0, 'Should return 0 if target iteration is greater than 1');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Equal, multiple characters');
+    try
+      ExpectEqual(ItPos('ababa', 'ababa', 1), 1, 'Should return 1 if target iteration is 1');
+      ExpectEqual(ItPos('ababa', 'ababa', 2), 0, 'Should return 0 if target iteration is greater than 1');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Contains, single character');
+    try
+      ExpectEqual(ItPos('3', '123453', 1), 3, 'Should return first position if target iteration is 1');
+      ExpectEqual(ItPos('3', '123453', 2), 6, 'Should return second position if target iteration is 2');
+      ExpectEqual(ItPos('3', '123453', 3), 0, 
+        'Should return 0 if target iteration exceeds the number of iterations present');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Contains, multiple characters');
+    try
+      ExpectEqual(ItPos('are', 'are you aware of the area, snare', 1), 1, 
+        'Should return first position if target iteration is 1');
+      ExpectEqual(ItPos('are', 'are you aware of the area, snare', 2), 11, 
+        'Should return second position if target iteration is 2');
+      ExpectEqual(ItPos('are', 'are you aware of the area, snare', 3), 22, 
+        'Should return third position if target iteration is 3');
+      ExpectEqual(ItPos('are', 'are you aware of the area, snare', 4), 30, 
+        'Should return fourth position if target iteration is 4');
+      ExpectEqual(ItPos('are', 'are you aware of the area, snare', 5), 0, 
+        'Should return 0 if target iteration exceeds the number of iterations present');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  
   (*** CopyFromTo Tests ***)
   Describe('CopyFromTo');
   try

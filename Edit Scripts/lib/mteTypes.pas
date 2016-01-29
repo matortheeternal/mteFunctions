@@ -132,6 +132,7 @@ end;
   List of functions:
   - TitleCase
   - SentenceCase
+  - ItPos
   - CopyFromTo
   - ReverseString
   - GetTextIn
@@ -142,9 +143,8 @@ end;
   - Wordwrap
   
   TODO:
+  - LastPos
   - Matches
-  - ItPos
-  - rPos
   - DelimitedTextBetween
   - StrStartsWith
   - PrependIfMissing
@@ -224,6 +224,46 @@ begin
         bTerminated := false;
       end;
       Result := Result + sChar;
+    end;
+  end;
+end;
+
+{
+  ItPos:
+  Returns the position of the @target iteration of @substr in @str.
+  If the requested iteration isn't found 0 is returned.
+  
+  Example usage:
+  s := '10101';
+  k := ItPos('1', s, 3);
+  AddMessage(IntToStr(k)); // 5
+}
+function ItPos(substr, str: String; target: Integer): Integer;
+var
+  i, found: Integer;
+begin
+  Result := 0;
+  found := 0;
+  
+  // exit if the target iteration is less than 1
+  // because that doesn't make any sense
+  if target < 1 then 
+    exit;
+    
+  // exit if substring is empty
+  if substr = '' then
+    exit;
+  
+  // loop through the input string
+  for i := 1 to Length(str) do begin
+    // check if the substring is at the current position
+    if Copy(str, i, Length(substr)) = substr then
+      Inc(found);
+      
+    // if this is the target iteration, set Result and break
+    if found = target then begin
+      Result := i;
+      Break;
     end;
   end;
 end;
