@@ -73,6 +73,16 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (*** BoolToStr Tests ***)
+  Describe('BoolToStr');
+  try
+    ExpectEqual(BoolToStr(true), 'True', 'True should return "True"');
+    ExpectEqual(BoolToStr(false), 'False', 'false should return "False"');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 {

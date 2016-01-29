@@ -20,6 +20,7 @@ const
   
   List of functions:
   - IfThenVar
+  - BoolToStr
 }
 {*****************************************************************************}
 
@@ -34,6 +35,15 @@ begin
     Result := ATrue
   else
     Result := AFalse;
+end;
+
+{
+  BoolToStr:
+  Returns 'True' if @b is true, 'False' if @b is false.
+}
+function BoolToStr(b: Boolean): String;
+begin
+  Result := IfThenVar(b, 'True', 'False');
 end;
 
 
