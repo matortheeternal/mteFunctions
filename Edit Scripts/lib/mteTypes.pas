@@ -419,25 +419,37 @@ end;
 }
 {*****************************************************************************}
 
-{ Returns the day portion of a TDateTime as an integer }
+{ 
+  DayOf:
+  Returns the day portion of a TDateTime as an integer
+}
 function DayOf(date: TDateTime): Integer;
 begin
   Result := Trunc(date);
 end;
 
-{ Returns the hour portion of a TDateTime as an integer }
+{ 
+  HourOf:
+  Returns the hour portion of a TDateTime as an integer
+}
 function HourOf(date: TDateTime): Integer;
 begin
   Result := Trunc(date / aHour) mod 24;
 end;
 
-{ Returns the minute portion of a TDateTime as an integer }
+{ 
+  MinuteOf:
+  Returns the minute portion of a TDateTime as an integer
+}
 function MinuteOf(date: TDateTime): Integer;
 begin
   Result := Trunc(date / aMinute) mod 60;
 end;
 
-{ Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
+{ 
+  RateStr:
+  Converts a TDateTime to a rate string, e.g. Every 24.0 hours
+}
 function RateStr(rate: TDateTime): string;
 begin
   if rate > aDay then
@@ -469,7 +481,10 @@ end;
 }
 {*****************************************************************************}
 
-{ Calculates the integer sum of all values in a TStringList to maxIndex }
+{ 
+  IntegerListSum:
+  Calculates the integer sum of all values in a TStringList to maxIndex
+}
 function IntegerListSum(sl: TStringList; maxIndex: integer): integer;
 var
   i: Integer;
@@ -488,7 +503,10 @@ begin
     Result := Result + StrToInt(sl[i]);
 end;
 
-{ Saves a string @s to a file at @fn }
+{ 
+  SaveStringToFile:
+  Saves a string @s to a file at @fn
+}
 procedure SaveStringToFile(s: string; fn: string);
 var
   sl: TStringList;
@@ -502,7 +520,10 @@ begin
   end;
 end;
 
-{ Applies the values in the stringlist @map to corresponding names in @template }
+{ 
+  ApplyTemplate:
+  Applies the values in the stringlist @map to corresponding names in @template
+}
 function ApplyTemplate(const template: string; var map: TStringList): string;
 const
   openTag = '{{';
@@ -525,14 +546,20 @@ begin
   end;
 end;
 
-{ Frees @obj then sets it to nil }
+{ 
+  FreeAndNil:
+  Frees @obj then sets it to nil
+}
 procedure FreeAndNil(var obj: TObject);
 begin
   obj.Free;
   obj := nil;
 end;
 
-{ Attempts to free and nil an object }
+{ 
+  TryToFree:
+  Attempts to free and nil an object
+}
 procedure TryToFree(var obj: TObject);
 const
   bDebugThis = false;

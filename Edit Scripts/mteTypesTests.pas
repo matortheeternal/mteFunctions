@@ -493,7 +493,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** StrEndsWith **)
+  (** StrEndsWith Tests **)
   Describe('StrEndsWith');
   try
     Describe('Empty string');
@@ -559,7 +559,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** AppendIfMissing **)
+  (** AppendIfMissing Tests **)
   Describe('AppendIfMissing');
   try
     ExpectEqual(AppendIfMissing('Sample', ' string'), 'Sample string', 
@@ -573,7 +573,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** RemoveFromEnd **)
+  (** RemoveFromEnd Tests **)
   Describe('RemoveFromEnd');
   try
     ExpectEqual(RemoveFromEnd('Sample string', 'string '), 'Sample string', 
@@ -587,7 +587,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** IsURL **)
+  (** IsURL Tests **)
   Describe('IsURL');
   try
     Describe('http');
@@ -628,7 +628,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** Wordwrap **)
+  (** Wordwrap Tests **)
   Describe('Wordwrap');
   try
     Describe('Empty string');
@@ -690,7 +690,7 @@ end;
 }
 procedure TestDateAndTimeHelpers;
 begin
-  (** DayOf **)
+  (** DayOf Tests **)
   Describe('DayOf');
   try
     ExpectEqual(DayOf(0.0), 0, '0.0 should return 0');
@@ -702,7 +702,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** HourOf **)
+  (** HourOf Tests **)
   Describe('HourOf');
   try
     ExpectEqual(HourOf(0.0), 0, '0.0 should return 0');
@@ -715,7 +715,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** MinuteOf **)
+  (** MinuteOf Tests **)
   Describe('MinuteOf');
   try
     ExpectEqual(MinuteOf(0.0), 0, '0.0 should return 0');
@@ -728,7 +728,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** RateStr **)
+  (** RateStr Tests **)
   Describe('RateStr');
   try
     ExpectEqual(RateStr(0.0), 'Every 0.0 minutes', '0 should render as "Every 0.0 minutes"');
@@ -742,7 +742,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** DurationStr **)
+  (** DurationStr Tests **)
   Describe('DurationStr');
   try
     ExpectEqual(DurationStr(0.0, ' '), '0d 0h 0m', 'No time passed should render 0d 0h 0m');
@@ -893,7 +893,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** SaveStringToFile **)
+  (** SaveStringToFile Tests **)
   Describe('SaveStringToFile');
   try
     s := 'This is an example string';
@@ -913,7 +913,7 @@ begin
     end;
   end;
   
-  (** ApplyTemplate **)
+  (** ApplyTemplate Tests **)
   Describe('ApplyTemplate');
   try
     Describe('Input list not assigned');
@@ -971,7 +971,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (** TryToFree **)
+  (** TryToFree Tests **)
   Describe('TryToFree');
   try
     TryToFree(slNoInit);
