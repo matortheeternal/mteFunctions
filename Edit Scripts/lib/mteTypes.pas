@@ -454,6 +454,8 @@ end;
   - IntegerListSum
   - SaveStringToFile
   - ApplyTemplate
+  - FreeAndNil
+  - TryToFree
 }
 {*****************************************************************************}
 
@@ -510,6 +512,29 @@ begin
     name := map.Names[i];
     value := map.ValueFromIndex[i];
     Result := StringReplace(Result, openTag + name + closeTag, value, [rfReplaceAll]);
+  end;
+end;
+
+{ Frees @obj then sets it to nil }
+procedure FreeAndNil(var obj: TObject);
+begin
+  obj.Free;
+  obj := nil;
+end;
+
+{ Attempts to free and nil an object }
+procedure TryToFree(var obj: TObject);
+const
+  bDebugThis = false;
+begin
+  try
+    if Assigned(obj) then
+      obj.Free;
+    obj := nil;
+  except
+    on x: Exception do begin
+      if bDebugThis then ShowMessage('TryToFree exception: '+x.Message);
+    end;
   end;
 end;
 

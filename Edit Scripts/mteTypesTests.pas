@@ -756,6 +756,7 @@ var
   bCaughtException: boolean;
   sl, slNoInit: TStringList;
   s: String;
+  lst: TList;
 begin
   (** IntegerListSum **)
   Describe('IntegerListSum');
@@ -764,7 +765,7 @@ begin
     try
       bCaughtException := false;
       try
-        IntegerListSum(slNoInit, 2);
+        IntegerListSum(sl, 2);
       except
         on x: Exception do begin
           bCaughtException := true;
@@ -793,11 +794,11 @@ begin
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -818,11 +819,11 @@ begin
         end;
       end;
       Expect(bCaughtException, 'Should have raised an exception');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -832,11 +833,11 @@ begin
       sl := TStringList.Create;
       sl.Add('2');
       ExpectEqual(IntegerListSum(sl, -1), 0, 'Should return 0');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -846,11 +847,11 @@ begin
       sl := TStringList.Create;
       sl.Add('2');
       ExpectEqual(IntegerListSum(sl, 0), 2, 'Should return the value of the item');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -867,11 +868,11 @@ begin
         'Should return complete sum when maxIndex = Count - 1');
       ExpectEqual(IntegerListSum(sl, 2), 8, 
         'Should return partial sum when maxIndex < Count - 1');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -893,10 +894,11 @@ begin
     ExpectEqual(sl.Text, 'This is an example string'#13#10, 
       'The file contents should match the input string');
     DeleteFile('MTE-TestFile.txt');
+    FreeAndNil(sl);
     Pass;
   except
     on x: Exception do begin
-      if Assigned(sl) then sl.Free;
+      if Assigned(sl) then FreeAndNil(sl);
       Fail(x);
     end;
   end;
@@ -928,11 +930,11 @@ begin
       sl.Add('Person=George');
       ExpectEqual(ApplyTemplate('This is {{NotAMatch}}', sl), 'This is {{NotAMatch}}',
         'Should return the template unchanged');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
-        if Assigned(sl) then sl.Free;
+        if Assigned(sl) then FreeAndNil(sl);
         Fail(x);
       end;
     end;
@@ -944,7 +946,7 @@ begin
       sl.Add('Day=Friday');
       ExpectEqual(ApplyTemplate('Hope your {{Day}} is going well, {{Person}}', sl), 
         'Hope your Friday is going well, George', 'Should substitute the mapped values');
-      sl.Free;
+      FreeAndNil(sl);
       Pass;
     except
       on x: Exception do begin
@@ -957,6 +959,24 @@ begin
     Pass;
   except
     on x: Exception do Fail(x);
+  end;
+  
+  (** TryToFree **)
+  Describe('TryToFree');
+  try
+    TryToFree(slNoInit);
+    Expect(not Assigned(slNoInit), 'Uninitialized object should be ignored');
+    sl := TStringList.Create;
+    TryToFree(sl);
+    Expect(not Assigned(sl), 'Initialized object should be freed');
+    TryToFree(sl);
+    Expect(not Assigned(sl), 'Freed object should be ignored');
+    Pass;
+  except
+    on x: Exception do begin
+      if Assigned(sl) then FreeAndNil(sl);
+      Fail(x);
+    end;
   end;
 end;
 
