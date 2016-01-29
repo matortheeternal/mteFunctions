@@ -461,13 +461,22 @@ end;
 {*****************************************************************************}
 
 { Calculates the integer sum of all values in a TStringList to maxIndex }
-function IntegerListSum(list: TStringList; maxIndex: integer): integer;
+function IntegerListSum(sl: TStringList; maxIndex: integer): integer;
 var
   i: Integer;
 begin
   Result := 0;
+  
+  // raise exception if input list is not assigned
+  if not Assigned(sl) then
+    raise Exception.Create('IntegerListSum: Input stringlist is not assigned');
+  // raise exception if input max index is out of bounds
+  if maxIndex >= sl.Count then
+    raise Exception.Create('IntegerListSum: Input maxIndex is out of bounds for the input stringlist');
+  
+  // perform the sum  
   for i := 0 to maxIndex do
-    Inc(result, StrToInt(list[i]));
+    Result := Result + StrToInt(sl[i]);
 end;
 
 { Checks to see if any mask in @sl matches the string @s }

@@ -746,6 +746,139 @@ begin
     on x: Exception do Fail(x);
   end;
 end;
+
+{
+  TestClassHelpers:
+  Tests class helper functions in mteTypes.
+}
+procedure TestClassHelpers;
+var
+  bCaughtException: boolean;
+  sl: TStringList;
+begin
+  (** IntegerListSum **)
+  Describe('IntegerListSum');
+  try
+    Describe('Input list not assigned');
+    try
+      bCaughtException := false;
+      try
+        IntegerListSum(sl, 2);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'IntegerListSum: Input stringlist is not assigned',
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Input maxIndex is out of bounds');
+    try
+      bCaughtException := false;
+      sl := TStringList.Create;
+      sl.Add('2');
+      try
+        IntegerListSum(sl, 1);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'IntegerListSum: Input maxIndex is out of bounds for the input stringlist',
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Describe('Item in list is not an integer');
+    try
+      bCaughtException := false;
+      sl := TStringList.Create;
+      sl.Add('a');
+      sl.Add('-3');
+      try
+        IntegerListSum(sl, 1);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, '''''a'''' is not a valid integer value',
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Describe('Input index is negative');
+    try
+      sl := TStringList.Create;
+      sl.Add('2');
+      ExpectEqual(IntegerListSum(sl, -1), 0, 'Should return 0');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Describe('One item in the list');
+    try
+      sl := TStringList.Create;
+      sl.Add('2');
+      ExpectEqual(IntegerListSum(sl, 0), 2, 'Should return the value of the item');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Describe('Multiple items in the list');
+    try
+      sl := TStringList.Create;
+      sl.Add('2');
+      sl.Add('-3');
+      sl.Add('9');
+      sl.Add('173674');
+      sl.Add('3');
+      ExpectEqual(IntegerListSum(sl, 4), 173685, 
+        'Should return complete sum when maxIndex = Count - 1');
+      ExpectEqual(IntegerListSum(sl, 2), 8, 
+        'Should return partial sum when maxIndex < Count - 1');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
@@ -781,6 +914,14 @@ begin
   Describe('Date and Time Helpers');
   try
     TestDateAndTimeHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Class Helpers');
+  try
+    TestClassHelpers;
     Pass;
   except
     on x: Exception do Fail(x);
