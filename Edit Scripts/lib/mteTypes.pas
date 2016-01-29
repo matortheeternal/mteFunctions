@@ -3,11 +3,22 @@
   
   General helpers for mteFunctions.
   See http://github.com/matortheeternal/mteFunctions
+  
+  - Matches
+  - ReverseStr
+  - ItPos
+  - rPos
+  - DelimitedTextBetween
 }
 
 unit mteTypes;
 
 uses 'lib\mteBase';
+
+type
+  TColor = Record
+    red, green, blue: integer;
+  end;
 
 const
   aDay = 1.0;
@@ -460,7 +471,10 @@ begin
     Result := Format('Every %0.1f minutes', [rate * 24.0 * 60.0])
 end;
 
-{ Converts a TDateTime to a duratrion string, e.g. 19d 20h 3m }
+{ 
+  DurationStr:
+  Converts a TDateTime to a duratrion string, e.g. 19d 20h 3m
+}
 function DurationStr(duration: TDateTime; sep: String): string;
 begin
   Result := Format('%dd%s%dh%s%dm', 
@@ -473,6 +487,7 @@ end;
   Functions for handling common classes like TStringLists and TLists.
   
   List of functions:
+  - ColorToInt
   - IntegerListSum
   - SaveStringToFile
   - ApplyTemplate
@@ -480,6 +495,21 @@ end;
   - TryToFree
 }
 {*****************************************************************************}
+
+{
+  ColorToInt:
+  Returns an integer corresponding to an input RGB color.
+  
+  Example usage:
+  color.Red := $FF;
+  color.Green := $FF;
+  color.Blue := $FF;
+  AddMessage(IntToStr(ColorToInt(color.Red, color.Green, color.Blue))); // 16777215
+}
+function ColorToInt(red: integer; green: integer; blue: integer): integer;
+begin
+  Result := blue * 65536 + green * 256 + red;
+end;
 
 { 
   IntegerListSum:

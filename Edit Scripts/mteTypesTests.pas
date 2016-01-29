@@ -763,12 +763,43 @@ end;
 }
 procedure TestClassHelpers;
 var
+  color: TColor;
   bCaughtException: boolean;
   sl, slNoInit: TStringList;
   s: String;
   lst: TList;
 begin
-  (** IntegerListSum **)
+  (** ColorToInt Tests **)
+  Describe('ColorToInt');
+  try
+    // black
+    color.red := 0;
+    color.green := 0;
+    color.blue := 0;
+    ExpectEqual(ColorToInt(color.red, color.green, color.blue), 0, 'Black should equal 0');
+    // red
+    color.red := 255;
+    ExpectEqual(ColorToInt(color.red, color.green, color.blue), 255, 'Red should equal 255');
+    // green
+    color.red := 0;
+    color.green := 255;
+    ExpectEqual(ColorToInt(color.red, color.green, color.blue), 65280, 'Green should equal 65280');
+    // blue
+    color.green := 0;
+    color.blue := 255;
+    ExpectEqual(ColorToInt(color.red, color.green, color.blue), 16711680, 'Blue should equal 16711680');
+    // white
+    color.red := 255;
+    color.green := 255;
+    ExpectEqual(ColorToInt(color.red, color.green, color.blue), 16777215, 'White should equal 16777215');
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (** IntegerListSum Tests **)
   Describe('IntegerListSum');
   try
     Describe('Input list not assigned');
