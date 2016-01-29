@@ -552,21 +552,10 @@ begin
   (** AppendIfMissing **)
   Describe('AppendIfMissing');
   try
-    Describe('When missing');
-    try
-      ExpectEqual(AppendIfMissing('Sample', ' string'), 'Sample string', 'Should append');
-      Pass;
-    except
-      on x: Exception do Fail(x);
-    end;
-    
-    Describe('When present');
-    try
-      ExpectEqual(AppendIfMissing('Sample string', ' string'), 'Sample string', 'Should not append');
-      Pass;
-    except
-      on x: Exception do Fail(x);
-    end;
+    ExpectEqual(AppendIfMissing('Sample', ' string'), 'Sample string', 
+      'Should append when missing');
+    ExpectEqual(AppendIfMissing('Sample string', ' string'), 'Sample string', 
+      'Should not append when present');
     
     // all tests passed?
     Pass;
@@ -577,21 +566,10 @@ begin
   (** RemoveFromEnd **)
   Describe('RemoveFromEnd');
   try
-    Describe('When missing');
-    try
-      ExpectEqual(RemoveFromEnd('Sample string', 'string '), 'Sample string', 'Should not remove');
-      Pass;
-    except
-      on x: Exception do Fail(x);
-    end;
-    
-    Describe('When present');
-    try
-      ExpectEqual(RemoveFromEnd('Sample string', ' string'), 'Sample', 'Should remove');
-      Pass;
-    except
-      on x: Exception do Fail(x);
-    end;
+    ExpectEqual(RemoveFromEnd('Sample string', 'string '), 'Sample string', 
+      'Should not remove when missing');
+    ExpectEqual(RemoveFromEnd('Sample string', ' string'), 'Sample', 
+      'Should remove when present');
     
     // all tests passed?
     Pass;
