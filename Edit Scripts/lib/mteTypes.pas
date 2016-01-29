@@ -445,6 +445,22 @@ begin
 
   Result := (Copy(str, 1, n2) = substr);
 end;
+
+{
+  PrependIfMissing:
+  Prepends substr to the beginning of str if it's not already there.
+
+  Example usage:
+  s := 'This is a sample string.';
+  AddMessage(PrependIfMissing(s, 'This ')); //'This is a sample string.'
+  AddMessage(PrependIfMissing(s, 'Hello.  ')); //'Hello.  This is a sample string.'
+}
+function PrependIfMissing(str, substr: string): string;
+begin
+  Result := str;
+  if not StrStartsWith(str, substr) then
+    Result := substr + str;
+end;
 end;
 
 { 

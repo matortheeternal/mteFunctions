@@ -810,6 +810,20 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (** PrependIfMissing Tests **)
+  Describe('PrependIfMissing');
+  try
+    ExpectEqual(PrependIfMissing('string', 'Sample '), 'Sample string', 
+      'Should prepend when missing');
+    ExpectEqual(PrependIfMissing('Sample string', 'Sample '), 'Sample string', 
+      'Should not prepend when present');
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
   (** IsURL Tests **)
   Describe('IsURL');
   try
