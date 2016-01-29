@@ -143,10 +143,6 @@ end;
   - RemoveFromStart
   - IsURL
   - Wordwrap
-  
-  TODO:
-  - Matches
-  - DelimitedTextBetween
 }
 {*****************************************************************************}
 
