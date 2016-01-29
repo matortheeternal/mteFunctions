@@ -461,6 +461,20 @@ begin
   if not StrStartsWith(str, substr) then
     Result := substr + str;
 end;
+
+{
+  RemoveFromStart:
+  Creates a new string with substr removed from the start of substr, if found.
+
+  Example usage:
+  s := 'This is a sample string.';
+  AddMessage(RemoveFromStart(s, 'This ')); //'is a sample string.'
+}
+function RemoveFromStart(str, substr: string): string;
+begin
+  Result := str;
+  if StrStartsWith(str, substr) then
+    Result := Copy(str, Length(substr) + 1, Length(str));
 end;
 
 { 

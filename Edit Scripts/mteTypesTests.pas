@@ -824,6 +824,20 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (** RemoveFromStart Tests **)
+  Describe('RemoveFromStart');
+  try
+    ExpectEqual(RemoveFromStart('Sample string', ' Sample'), 'Sample string', 
+      'Should not remove when missing');
+    ExpectEqual(RemoveFromStart('Sample string', 'Sample '), 'string', 
+      'Should remove when present');
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
   (** IsURL Tests **)
   Describe('IsURL');
   try
