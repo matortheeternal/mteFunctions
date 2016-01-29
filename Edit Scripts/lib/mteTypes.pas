@@ -397,9 +397,13 @@ end;
 { Date and Time Helpers
   Functions for handling dates and times.
   
+  NOTE: I did not implement SecondOf or RateStr down to seconds because 
+  limitations in precision in the jvInterpreter.
+  
   List of functions:
   - DayOf
   - HourOf
+  - MinuteOf
   - RateStr
   - TimeStr
 }

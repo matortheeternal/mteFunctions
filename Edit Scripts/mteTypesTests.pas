@@ -704,6 +704,19 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** MinuteOf **)
+  Describe('MinuteOf');
+  try
+    ExpectEqual(MinuteOf(0.0), 0, '0.0 should return 0');
+    ExpectEqual(MinuteOf(1.0 * aMinute), 1, '1.0 minute should return 1');
+    ExpectEqual(MinuteOf(1.9999 * aMinute), 1, '1.9999 minutes should return 1');
+    ExpectEqual(MinuteOf(59.99 * aMinute), 59, '59.99 minutes should return 59');
+    ExpectEqual(MinuteOf(60.0 * aMinute), 0, '60.0 minutes should return 0');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
