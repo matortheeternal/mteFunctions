@@ -3,6 +3,15 @@
   
   System helpers for mteFunctions.
   See http://github.com/matortheeternal/mteFunctions
+  
+  TODO:
+  - IsDirectoryEmpty
+  - CopyDirectory
+  - BatchCopyDirectory
+  - DeleteDirectory
+  - RecursiveFileSearch
+  - SanitizeFileName
+  - FileDateTimeStr
 }
 
 unit mteSystem;
