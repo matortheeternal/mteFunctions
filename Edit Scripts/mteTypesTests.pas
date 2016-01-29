@@ -754,7 +754,7 @@ end;
 procedure TestClassHelpers;
 var
   bCaughtException: boolean;
-  sl: TStringList;
+  sl, slNoInit: TStringList;
 begin
   (** IntegerListSum **)
   Describe('IntegerListSum');
@@ -763,7 +763,7 @@ begin
     try
       bCaughtException := false;
       try
-        IntegerListSum(sl, 2);
+        IntegerListSum(slNoInit, 2);
       except
         on x: Exception do begin
           bCaughtException := true;
