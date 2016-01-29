@@ -900,6 +900,60 @@ begin
       Fail(x);
     end;
   end;
+  
+  (** ApplyTemplate **)
+  Describe('ApplyTemplate');
+  try
+    Describe('Input list not assigned');
+    try
+      bCaughtException := false;
+      try
+        ApplyTemplate('Hi {{Person}}', slNoInit);
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'ApplyTemplate: Input map stringlist is not assigned',
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('No matches in template');
+    try
+      sl := TStringList.Create;
+      sl.Add('Person=George');
+      ExpectEqual(ApplyTemplate('This is {{NotAMatch}}', sl), 'This is {{NotAMatch}}',
+        'Should return the template unchanged');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    Describe('Multiple matches');
+    try
+      sl := TStringList.Create;
+      sl.Add('Person=George');
+      sl.Add('Day=Friday');
+      ExpectEqual(ApplyTemplate('Hope your {{Day}} is going well, {{Person}}', sl), 
+        'Hope your Friday is going well, George', 'Should substitute the mapped values');
+      sl.Free;
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(sl) then sl.Free;
+        Fail(x);
+      end;
+    end;
+    
+    // all tests passed?
     Pass;
   except
     on x: Exception do Fail(x);

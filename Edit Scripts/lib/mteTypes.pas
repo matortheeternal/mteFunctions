@@ -490,6 +490,7 @@ begin
   end;
 end;
 
+{ Applies the values in the stringlist @map to corresponding names in @template }
 function ApplyTemplate(const template: string; var map: TStringList): string;
 const
   openTag = '{{';
@@ -499,6 +500,12 @@ var
   name, value: string;
 begin
   Result := template;
+  
+  // raise exception if input map is not assigned
+  if not Assigned(map) then
+    raise Exception.Create('ApplyTemplate: Input map stringlist is not assigned');
+  
+  // apply the map to the template
   for i := 0 to Pred(map.Count) do begin
     name := map.Names[i];
     value := map.ValueFromIndex[i];
