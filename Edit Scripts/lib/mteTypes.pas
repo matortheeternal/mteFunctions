@@ -438,10 +438,11 @@ begin
     Result := Format('Every %0.1f minutes', [rate * 24.0 * 60.0])
 end;
 
-{ Converts a TDateTime to a time string, e.g. 19d 20h 3m 30s }
-function TimeStr(date: TDateTime): string;
+{ Converts a TDateTime to a duratrion string, e.g. 19d 20h 3m }
+function DurationStr(duration: TDateTime; sep: String): string;
 begin
-  Result := Format('%dd %dh %dm', [Trunc(date), HourOf(date), MinuteOf(date)]);
+  Result := Format('%dd%s%dh%s%dm', 
+    [DayOf(duration), sep, HourOf(duration), sep, MinuteOf(duration)]);
 end;
 
 

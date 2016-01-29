@@ -731,6 +731,21 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** DurationStr **)
+  Describe('DurationStr');
+  try
+    ExpectEqual(DurationStr(0.0, ' '), '0d 0h 0m', 'No time passed should render 0d 0h 0m');
+    ExpectEqual(DurationStr(aMinute, ' '), '0d 0h 1m', 'Minutes should render');
+    ExpectEqual(DurationStr(aHour, ' '), '0d 1h 0m', 'Hours should render');
+    ExpectEqual(DurationStr(aDay, ' '), '1d 0h 0m', 'Days should render');
+    ExpectEqual(DurationStr(aDay + aHour + aMinute, ':'), '1d:1h:1m', 
+      'Custom separator should render');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
 end;
 
 { 
