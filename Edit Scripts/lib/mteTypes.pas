@@ -133,6 +133,7 @@ end;
   - TitleCase
   - SentenceCase
   - ItPos
+  - LastPos
   - CopyFromTo
   - ReverseString
   - GetTextIn
@@ -143,7 +144,6 @@ end;
   - Wordwrap
   
   TODO:
-  - LastPos
   - Matches
   - DelimitedTextBetween
   - StrStartsWith
@@ -264,6 +264,38 @@ begin
     if found = target then begin
       Result := i;
       Break;
+    end;
+  end;
+end;
+
+{
+  LastPos:
+  Gets the last position of @substr in @str.  Returns 0 if the substring 
+  isn't found in the input string.
+  
+  Example usage:
+  s := 'C:\Program Files (x86)\steam\SteamApps\common\Skyrim\TES5Edit.exe';
+  AddMessage(Copy(s, LastPos('\', s) + 1, Length(s))); // 'TES5Edit.exe'
+}
+function LastPos(substr, str: String): Integer;
+var
+  i: integer;
+begin
+  Result := 0;
+  
+  // if str and substr are the same length,
+  // Result is whether or not they're equal
+  if (Length(str) - Length(substr) <= 0) then begin
+    if (str = substr) then
+      Result := 1;
+    exit;
+  end;
+  
+  // 
+  for i := Length(str) - Length(substr) downto 1 do begin
+    if (Copy(str, i, Length(substr)) = substr) then begin
+      Result := i;
+      break;
     end;
   end;
 end;
@@ -556,6 +588,9 @@ end;
   - ApplyTemplate
   - FreeAndNil
   - TryToFree
+  
+  TODO:
+  - LoadStringFromFile
 }
 {*****************************************************************************}
 

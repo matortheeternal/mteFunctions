@@ -423,6 +423,50 @@ begin
     on x: Exception do Fail(x);
   end;
   
+  (*** LastPos ***)
+  Describe('LastPos');
+  try
+    Describe('Search String is empty');
+    try
+      ExpectEqual(LastPos('a', ''), 0, 'Should return 0');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Substring is empty');
+    try
+      ExpectEqual(LastPos('', 'hi'), 2, 'Should return Length(str)');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Equal');
+    try
+      ExpectEqual(LastPos('a', 'a'), 1, 'Single Character: Should return 1');
+      ExpectEqual(LastPos('ababa', 'ababa'), 1, 'Multiple Characters: Should return 1');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Contains');
+    try
+      ExpectEqual(LastPos('sub', 'A sub, another sub.  Not a sud.'), 16, 'Should return the last position');
+      ExpectEqual(LastPos('sub', 'A sub, another sub.  SUB.'), 16, 'Should be case sensitive');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  
   
   (*** CopyFromTo Tests ***)
   Describe('CopyFromTo');
