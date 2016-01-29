@@ -140,15 +140,15 @@ end;
   - StrEndsWith
   - AppendIfMissing
   - RemoveFromEnd
+  - StrStartsWith
+  - PrependIfMissing
+  - RemoveFromStart
   - IsURL
   - Wordwrap
   
   TODO:
   - Matches
   - DelimitedTextBetween
-  - StrStartsWith
-  - PrependIfMissing
-  - RemoveFromStart
 }
 {*****************************************************************************}
 
@@ -291,7 +291,7 @@ begin
     exit;
   end;
   
-  // 
+  // loop through the string backwards
   for i := Length(str) - Length(substr) downto 1 do begin
     if (Copy(str, i, Length(substr)) = substr) then begin
       Result := i;
@@ -380,17 +380,17 @@ end;
   if StrEndsWith(s, 'string.') then
     AddMessage('It works!');
 }
-function StrEndsWith(s1, s2: string): boolean;
+function StrEndsWith(str, substr: string): boolean;
 var
   n1, n2: integer;
 begin
   Result := false;
 
-  n1 := Length(s1);
-  n2 := Length(s2);
+  n1 := Length(str);
+  n2 := Length(substr);
   if n1 < n2 then exit;
 
-  Result := (Copy(s1, n1 - n2 + 1, n2) = s2);
+  Result := (Copy(str, n1 - n2 + 1, n2) = substr);
 end;
 
 {
@@ -411,17 +411,18 @@ end;
 
 {
   RemoveFromEnd:
-  Creates a new string with s1 removed from the end of s2, if found.
+  Creates a new string with substr removed from the end of s2, if found.
 
   Example usage:
   s := 'This is a sample string.';
   AddMessage(RemoveFromEnd(s, 'string.')); //'This is a sample '
 }
-function RemoveFromEnd(s1, s2: string): string;
+function RemoveFromEnd(str, substr: string): string;
 begin
-  Result := s1;
-  if StrEndsWith(s1, s2) then
-    Result := Copy(s1, 1, Length(s1) - Length(s2));
+  Result := str;
+  if StrEndsWith(str, substr) then
+    Result := Copy(str, 1, Length(str) - Length(substr));
+end;
 end;
 
 { 
