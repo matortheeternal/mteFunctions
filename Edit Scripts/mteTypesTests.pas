@@ -717,6 +717,20 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** RateStr **)
+  Describe('RateStr');
+  try
+    ExpectEqual(RateStr(0.0), 'Every 0.0 minutes', '0 should render as "Every 0.0 minutes"');
+    ExpectEqual(RateStr(10.3 * aMinute), 'Every 10.3 minutes', 'Minutes should render');
+    ExpectEqual(RateStr(6.7 * aHour), 'Every 6.7 hours', 'Hours should render');
+    ExpectEqual(RateStr(3.6 * aDay), 'Every 3.6 days', 'Days should render');
+    ExpectEqual(RateStr(1.0 * aHour), 'Every 60.0 minutes', '1 hour should render as 60.0 minutes');
+    ExpectEqual(RateStr(1.0 * aDay), 'Every 24.0 hours', '1 day should render as 24.0 hours');
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 

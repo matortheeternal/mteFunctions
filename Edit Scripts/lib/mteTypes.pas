@@ -421,17 +421,21 @@ begin
   Result := Trunc(date / aHour) mod 24;
 end;
 
-{ Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
-function RateStr(date: TDateTime): string;
+{ Returns the minute portion of a TDateTime as an integer }
+function MinuteOf(date: TDateTime): Integer;
 begin
-  if date > 1.0 then
-    Result := Format('Every %0.2f days', [date])
-  else if date * 24.0 > 1.0 then
-    Result := Format('Every %0.1f hours', [date * 24.0])
-  else if date * 24.0 * 60.0 > 1.0 then
-    Result := Format('Every %0.1f minutes', [date * 24.0 * 60.0])
+  Result := Trunc(date / aMinute) mod 60;
+end;
+
+{ Converts a TDateTime to a rate string, e.g. Every 24.0 hours }
+function RateStr(rate: TDateTime): string;
+begin
+  if rate > aDay then
+    Result := Format('Every %0.1f days', [rate])
+  else if rate > aHour then
+    Result := Format('Every %0.1f hours', [rate * 24.0])
   else
-    Result := Format('Every %0.1f seconds', [date * 24.0 * 60.0 * 60.0]);
+    Result := Format('Every %0.1f minutes', [rate * 24.0 * 60.0])
 end;
 
 { Converts a TDateTime to a time string, e.g. 19d 20h 3m 30s }
