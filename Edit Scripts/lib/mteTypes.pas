@@ -452,7 +452,6 @@ end;
   
   List of functions:
   - IntegerListSum
-  - ContainsMatch
   - SaveStringToFile
   - ApplyTemplate
   - TryToFree
@@ -477,19 +476,6 @@ begin
   // perform the sum  
   for i := 0 to maxIndex do
     Result := Result + StrToInt(sl[i]);
-end;
-
-{ Checks to see if any mask in @sl matches the string @s }
-function ContainsMatch(var sl: TStringList; const s: string): boolean;
-var
-  i: Integer;
-begin
-  Result := false;
-  for i := 0 to Pred(sl.Count) do
-    if MatchesMask(s, sl[i]) then begin
-      Result := true;
-      break;
-    end;
 end;
 
 { Saves a string @s to a file at @fn }
