@@ -9,7 +9,7 @@ mteFunctions has a full suite of tests, created using [jvTest](https://github.co
 
 ## Progress
 
-| Section       | Percent Complete                          |
+| Section       | Progress                                  |
 |---------------|-------------------------------------------|
 | Documentation | ![Progress](http://progressed.io/bar/0)   |
 | mteBase       | ![Progress](http://progressed.io/bar/100) |
