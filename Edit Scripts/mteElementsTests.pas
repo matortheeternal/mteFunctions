@@ -5,7 +5,7 @@
 
 unit mteElementsTests;
 
-uses 'lib\mteFiles', 'lib\jvTest';
+uses 'lib\mteBase', 'lib\mteFiles', 'lib\jvTest';
 
 const
   mteTestVersion = '0.0.0.1';

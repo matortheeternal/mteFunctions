@@ -7,8 +7,6 @@
 
 unit mteRecords;
 
-uses 'lib\mteElements';
-
 {****************************************************}
 { GENERAL METHODS
   General methods for handling IwbMainRecords.
@@ -80,7 +78,5 @@ begin
   index := GetFlagOrdinal(element, name);
   Result := GetFlag(element, index);
 end;
-
-
 
 end.

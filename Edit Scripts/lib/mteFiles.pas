@@ -6,7 +6,7 @@
 }
 
 unit mteFiles;
-  
+
 uses 'lib\mteElements';
 
 const
@@ -435,7 +435,8 @@ begin
       // TODO: Do this with native code instead of calling AddMaster
       // because AddMaster rebuilds a stringlist of the file's masters 
       // each time it is called.
-      if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) and (slCurrentMasters.IndexOf(sl[i]) = -1) then
+      if (Lowercase(sl[i]) <> Lowercase(GetFileName(f))) 
+      and (slCurrentMasters.IndexOf(sl[i]) = -1) then
         AddMaster(f, FileByName(sl[i]));
     end;
   finally

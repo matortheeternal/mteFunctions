@@ -7,8 +7,6 @@
 
 unit mteSystem;
 
-uses 'lib\mteBase';
-
 { Like ExtractFilePath, but will allow the user to specify how many @levels
   they want to traverse back.  Specifying @levels = 0 is equivalent to
   ExtractFilePath.

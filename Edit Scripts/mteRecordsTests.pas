@@ -5,7 +5,7 @@
 
 unit mteRecordsTests;
 
-uses 'lib\mteRecords', 'lib\jvTest';
+uses 'lib\mteBase', 'lib\mteRecords', 'lib\jvTest';
 
 const
   mteTestVersion = '0.0.0.1';

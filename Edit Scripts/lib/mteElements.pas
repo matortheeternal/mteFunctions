@@ -7,8 +7,6 @@
 
 unit mteElements;
 
-uses 'lib\mteBase';
-
 {****************************************************}
 { TYPE CONVERSION
   Methods for converting various xEdit types.
