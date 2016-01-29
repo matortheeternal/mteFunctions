@@ -482,9 +482,12 @@ var
   sl: TStringList;
 begin
   sl := TStringList.Create;
-  sl.Text := s;
-  sl.SaveToFile(fn);
-  sl.Free;
+  try
+    sl.Text := s;
+    sl.SaveToFile(fn);
+  finally
+    sl.Free;
+  end;
 end;
 
 function ApplyTemplate(const template: string; var map: TStringList): string;

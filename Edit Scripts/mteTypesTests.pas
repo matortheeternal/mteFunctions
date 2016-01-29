@@ -755,6 +755,7 @@ procedure TestClassHelpers;
 var
   bCaughtException: boolean;
   sl, slNoInit: TStringList;
+  s: String;
 begin
   (** IntegerListSum **)
   Describe('IntegerListSum');
@@ -875,6 +876,30 @@ begin
       end;
     end;
     
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (** SaveStringToFile **)
+  Describe('SaveStringToFile');
+  try
+    s := 'This is an example string';
+    SaveStringToFile(s, 'MTE-TestFile.txt');
+    sl := TStringList.Create;
+    sl.LoadFromFile('MTE-TestFile.txt');
+    Expect(FileExists('MTE-TestFile.txt'), 'The file should exist');
+    ExpectEqual(sl.Text, 'This is an example string'#13#10, 
+      'The file contents should match the input string');
+    DeleteFile('MTE-TestFile.txt');
+    Pass;
+  except
+    on x: Exception do begin
+      if Assigned(sl) then sl.Free;
+      Fail(x);
+    end;
+  end;
     Pass;
   except
     on x: Exception do Fail(x);
