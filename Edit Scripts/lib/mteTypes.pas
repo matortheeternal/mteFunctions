@@ -7,8 +7,6 @@
 
 unit mteTypes;
 
-uses 'lib\mteBase';
-
 type
   TColor = Record
     red, green, blue: integer;
