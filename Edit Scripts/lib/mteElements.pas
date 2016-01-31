@@ -7,9 +7,19 @@
 
 unit mteElements;
 
+const
+  // VARIANT TYPES
+  varInteger = 3;
+  varDouble = 5;
+  varShortInt = 16;
+  varString =  256; { Pascal string }
+  varUString = 258; { Unicode string }
+  { SEE http://stackoverflow.com/questions/24731098/ for more }
+
+
 {****************************************************}
-{ TYPE CONVERSION
-  Methods for converting various xEdit types.
+{ TYPE HELPERS
+  Methods for converting xEdit types.
   - etToString
   - dtToString
   - ctToString
@@ -123,7 +133,7 @@ end;
 
 {****************************************************}
 { ELEMENT HELPERS
-  Helper methods for dealing with elements.
+  Helper methods for dealing with arbitrary elements.
   - ConflictThis
   - ConflictAll
   - ElementPath
@@ -800,6 +810,77 @@ end;
 procedure senv(e: IInterface; path: string; value: Variant);
 begin
   SetElementNativeValues(e, path, value);
+end;
+
+  
+{****************************************************}
+{ FLAG METHODS
+  Generic methods for handling flags.
+  
+  List of functions:
+  - SetFlag
+  - GetFlag
+  - GetFlagOrdinal
+  - ToggleFlag
+  - GetEnabledFlags
+}
+{****************************************************}
+
+procedure SetFlag(element: IInterface; index: Integer; state: boolean);
+var
+  mask: Integer;
+begin
+  mask := 1 shl index;
+  if state then
+    SetNativeValue(element, GetNativeValue(element) or mask)
+  else
+    SetNativeValue(element, GetNativeValue(element) and not mask);
+end;
+
+function GetFlag(element: IInterface; index: Integer): boolean;
+var
+  mask: Integer;
+begin
+  mask := 1 shl index;
+  Result := (GetNativeValue(element) and mask) > 0;
+end;
+
+function GetFlagOrdinal(element: IInterface; name: string): Integer;
+var
+  i, iRestore: Integer;
+  flag: IInterface;
+begin
+  Result := -1;
+  iRestore := GetNativeValue(element);
+  
+  // set all flags on so we can find the user-specified flag
+  SetNativeValue(element, $FFFFFFFF);
+  for i := 0 to Pred(ElementCount(element)) do begin
+    flag := ElementByIndex(element, i);
+    if Name(flag) = name then begin
+      Result := i;
+      break;
+    end;
+  end;
+  
+  // restore value
+  SetNativeValue(element, iRestore);
+end;
+
+procedure SetFlagByName(element: IInterface; name: string; state: boolean);
+var
+  index: Integer;
+begin
+  index := GetFlagOrdinal(element, name);
+  SetFlag(element, index, state);
+end;
+
+function GetFlagByName(element: IInterface; name: string): boolean;
+var
+  index: Integer;
+begin
+  index := GetFlagOrdinal(element, name);
+  Result := GetFlag(element, index);
 end;
 
 
