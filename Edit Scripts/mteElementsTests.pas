@@ -5,7 +5,7 @@
 
 unit mteElementsTests;
 
-uses 'lib\mteBase', 'lib\mteFiles', 'lib\jvTest';
+uses 'lib\mteBase', 'lib\mteFiles', 'lib\mteTypes', 'lib\jvTest';
 
 const
   mteTestVersion = '0.0.0.1';
@@ -250,7 +250,7 @@ var
   lst: TList;
   sl, sl2: TStringList;
 begin
-  (*** ConflictThis ***)
+  (*** ConflictThis Tests ***)
   Describe('ConflictThis');
   try
     Describe('Input element not assigned');
@@ -358,7 +358,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** ConflictAll ***)
+  (*** ConflictAll Tests ***)
   Describe('ConflictAll');
   try
     Describe('Input element not assigned');
@@ -464,7 +464,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** ElementPath ***)
+  (*** ElementPath Tests ***)
   Describe('ElementPath');
   try
     // Test with etFile
@@ -569,7 +569,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** IndexedPath ***)
+  (*** IndexedPath Tests ***)
   Describe('IndexedPath');
   try
     // Test with etFile
@@ -674,7 +674,7 @@ begin
     on x: Exception do Fail(x);
   end;
   
-  (*** MoveElementToIndex ***)
+  (*** MoveElementToIndex Tests ***)
   Describe('MoveElementToIndex');
   try
     // Test with etFile
