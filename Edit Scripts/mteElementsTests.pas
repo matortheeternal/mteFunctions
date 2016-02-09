@@ -814,6 +814,76 @@ begin
   end;
 end;
 
+procedure TestElementGetters;
+var
+  f, rec, e: IInterface;
+  bCaughtException: Boolean;
+begin
+  (*** ElementByIP Tests ***)
+  Describe('ElementByIP');
+  try
+    Describe('Input element not assigned');
+    try
+      bCaughtException := false;
+      try
+        ElementByIP(e, 'Fake/Path');
+      except
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'ElementByIP: Input element not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // assign some variables
+    f := FileByName(mteTestFile1);
+    rec := RecordByIndex(f, 1);
+    
+    Describe('Input path blank');
+    try
+      e := ElementByIP(rec, '');
+      Expect(Equals(rec, e), 'Should return the input element');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Invalid path');
+    try
+      e := ElementByIP(rec, 'Nonexisting\Path');
+      Expect(not Assigned(e), 'No indexes: Should return nil');
+      e := ElementByIP(rec, '[99]');
+      Expect(not Assigned(e), 'With indexes: Should return nil');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Valid path');
+    try
+      e := ElementByIP(rec, 'EDID');
+      ExpectEqual(GetEditValue(e), 'FoodBlackBriarMead', 'No indexes: Should return the correct element');
+      e := ElementByIP(rec, '[1]');
+      ExpectEqual(GetEditValue(e), 'FoodBlackBriarMead', 'With indexes: Should return the correct element');
+      e := ElementByIP(rec, 'Effects\[1]\[1]\Magnitude');
+      ExpectEqual(GetEditValue(e), '40.000000', 'Multi-part path: Should return the correct element');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
+
 { 
   TestMteElements:
   Tests the functions in mteElements using the jvTest framework.
@@ -831,6 +901,14 @@ begin
   Describe('Element Helpers');
   try
     TestElementHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Element Getters');
+  try
+    TestElementGetters;
     Pass;
   except
     on x: Exception do Fail(x);
