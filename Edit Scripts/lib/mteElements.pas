@@ -337,6 +337,10 @@ var
   i, index: integer;
   path: TStringList;
 begin
+  // raise exception if input element is not assigned
+  if not Assigned(e) then
+    raise Exception.Create('ElementByIP: Input element not assigned');
+  
   // replace forward slashes with backslashes
   ip := StringReplace(ip, '/', '\', [rfReplaceAll]);
   
