@@ -18,6 +18,98 @@ const
 
 
 {****************************************************}
+{ ELEMENT COMPARISON
+  Metohds for comparing or evaluating elements.
+  - IsValue
+  - ElementMatches
+  - StructMatches
+}
+{****************************************************}
+
+function IsValue(element: IInterface): Boolean;
+var
+  dt: Integer;
+begin
+  dt := DefType(element);
+  Result := (dt = dtString) 
+    or (dt = dtLString) 
+    or (dt = dtLenString) 
+    or (dt = dtByteArray) 
+    or (dt = dtInteger) 
+    or (dt = dtFloat);
+end;
+
+function ElementMatches(element: IInterface; value: Variant): Boolean;
+var
+  vt: Integer;
+  rec: IInterface;
+begin
+  Result := False;
+  case vt of 
+    varInteger, varDouble, varShortInt:
+      Result := (value = GetNativeValue(element));
+    varString, varUString: begin
+      Result := (value = GetEditValue(element));
+  
+      // Check value matches linked EDID - EditorID or NAME - Base
+      if not Result then try
+        rec := LinksTo(element);
+        // exit if element doesn't link to anything
+        if not Assigned(rec) then 
+          exit;
+        // else check EDID and NAME for match
+        if ElementExists(rec, 'EDID') then
+          Result := GetElementEditValues(rec, 'EDID') = value
+        else if ElementExists(rec, 'NAME') then
+          Result := GetElementEditValues(rec, 'NAME') = value;
+      except
+        on x: Exception do begin 
+          // nothing
+        end;
+      end;
+    end;
+  end;
+end;
+
+function StructMatches(container, struct: IInterface; path: String; value: Variant): Boolean;
+var
+  element: IInterface;
+  vt: Integer;
+  key: String;
+begin
+  Result := false;
+  
+  vt := VarType(value);
+  // if path is empty, compare struct directly to value
+  if (path = '') then begin
+    // if value isn't a string, raise exception because comparison will fail
+    if (vt <> vtString) and (vt <> vtUString) then
+      raise Exception.Create(Format('StructMatches: Unable to compare value at path '+
+        '"%s" against variant of type %d', [Path(struct), vt]);
+    
+    // get key for struct - use SortKey if container is sorted else use GetAllValues
+    if IsSorted(container) then
+      key := SortKey(struct)
+    else
+      key := GetAllValues(struct);
+      
+    // Result is whether or not the key matches the value
+    Result := key = value;
+  end
+  // else get element at path
+  else begin
+    element := ElementByPath(struct, path);
+    // if the element holds a value, compare using ElementMatches
+    if IsValue(element) then 
+      Result := ElementMatches(element, value)
+    // else compare structs by calling StructMatches again
+    else
+      Result := StructMatches(GetContainer(element), element, '', value);
+  end;
+end;
+  
+  
+{****************************************************}
 { TYPE HELPERS
   Methods for converting xEdit types.
   - etToString
