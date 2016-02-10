@@ -1065,4 +1065,77 @@ begin
 end;
 
 
+{****************************************************}
+{ ARRAY STRUCT FUNCTIONS
+  Generic methods for handling array structs.
+  
+  List of functions:
+  - HasArrayStruct
+  - GetArrayStruct
+  - AddArrayStruct
+  - DeleteArrayStruct
+}
+{****************************************************}
+
+function HasArrayStruct(a: IInterface; path: String; value: Variant): Boolean;
+var
+  i: Integer;
+  struct: IInterface;
+begin
+  Result := false;
+  
+  // loop through array elements
+  for i := 0 to Pred(ElementCount(a)) do begin
+    struct := ElementByIndex(a, i);
+    // if struct matches value, set result to true and break
+    if StructMatches(a, struct, path, value) then begin
+      Result := true;
+      Break;
+    end;
+  end;
+end;
+
+function GetArrayStruct(a: IInterface; path: String; value: Variant): IInterface;
+var
+  i: Integer;
+  struct: IInterface;
+begin
+  Result := nil;
+  
+  // loop through array elements
+  for i := 0 to Pred(ElementCount(a)) do begin
+    struct := ElementByIndex(a, i);
+    // if struct matches value, set result to true and break
+    if StructMatches(a, struct, path, value) then begin
+      Result := struct;
+      Break;
+    end;
+  end;
+end;
+
+// TODO: Support setting value of added array struct
+function AddArrayStruct(a: IInterface): IInterface;
+begin
+  Result := nil;
+  
+  // add the struct to the array
+  Result := ElementAssign(a, HighInteger, nil, false);
+end;
+
+procedure DeleteArrayStruct(a: IInterface; path: String; value: Variant);
+var
+  i: Integer;
+  struct: IInterface;
+begin
+  // loop through array elements
+  for i := Pred(ElementCount(a)) downto 0 do begin
+    struct := ElementByIndex(a, i);
+    // if struct matches value, set result to true and break
+    if StructMatches(a, struct, path, value) then begin
+      RemoveElement(a, struct);
+      Break;
+    end;
+  end;
+end;
+
 end.
