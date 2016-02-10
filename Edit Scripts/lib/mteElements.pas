@@ -979,5 +979,90 @@ begin
   Result := GetFlag(element, index);
 end;
 
+{****************************************************}
+{ ARRAY ELEMENT METHODS
+  Generic methods for handling array elements.
+  
+  List of functions:
+  - HasArrayValue
+  - GetArrayValue
+  - AddArrayValue
+  - DeleteArrayValue
+}
+{****************************************************}
+
+function HasArrayValue(a: IInterface; value: Variant): Boolean;
+var
+  i: Integer;
+  element: IInterface;
+begin
+  Result := false;
+  
+  // loop through array elements
+  for i := 0 to Pred(ElementCount(a)) do begin
+    element := ElementByIndex(a, i);
+    // if element matches value, set result to true and break
+    if ElementMatches(element, value) then begin
+      Result := true;
+      Break;
+    end;
+  end;
+end;
+
+function GetArrayValue(a: IInterface; value: Variant): IInterface;
+var
+  i: Integer;
+  element: IInterface;
+begin
+  Result := nil;
+  
+  // loop through array elements
+  for i := 0 to Pred(ElementCount(a)) do begin
+    element := ElementByIndex(a, i);
+    // if element matches value, set it to result and break
+    if ElementMatches(element, value) then begin
+      Result := element;
+      Break;
+    end;
+  end;
+end;
+
+function AddArrayValue(a: IInterface; value: Variant): IInterface;
+var
+  i, vt: Integer;
+begin
+  Result := nil;
+  
+  // add the element to the array
+  Result := ElementAssign(a, HighInteger, nil, false);
+  
+  // set value to new element
+  vt := VarType(value);
+  case vt of 
+    // native value if integer or floating point
+    varInteger, varDouble, varShortInt:
+      SetNativeValue(Result, value);
+    // edit value if string or unicode string
+    varString, varUString: 
+      SetEditValue(Result, value);
+  end;
+end;
+
+procedure DeleteArrayValue(a: IInterface; value: Variant);
+var
+  i: Integer;
+  element: IInterface;
+begin
+  // loop through array elements
+  for i := Pred(ElementCount(a)) downto 0 do begin
+    element := ElementByIndex(a, i);
+    // if element matches value, delete it and break
+    if ElementMatches(element, value) then begin
+      RemoveElement(a, element);
+      Break;
+    end;
+  end;
+end;
+
 
 end.
