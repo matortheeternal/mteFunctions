@@ -1085,6 +1085,81 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** AddArrayValue **)
+  Describe('AddArrayValue');
+  try
+    Describe('Input array not assigned');
+    try
+      bCaughtException := false;
+      try
+        AddArrayValue(nil, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'AddArrayValue: Input array not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // assign some variables
+    f := FileByName(mteTestFile1);
+    rec := RecordByIndex(f, 1);
+    a := ElementByPath(rec, 'KWDA');
+    
+    Describe('Input value not assigned');
+    try
+      bCaughtException := false;
+      try
+        AddArrayValue(a, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'AddArrayValue: Input value not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Valid value');
+    try
+      e := AddArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]');
+      ExpectEqual(ElementCount(a), 2, 'Edit Value: Should add a new element');
+      ExpectEqual(GetEditValue(e), 'VendorItemIngredient [KYWD:0008CDEB]',
+        'Edit Value: Should set the correct value');
+      RemoveElement(a, e);
+      e := nil;
+      
+      e := AddArrayValue(a, $0008CDEB);
+      ExpectEqual(ElementCount(a), 2, 'Edit Value: Should add a new element');
+      ExpectEqual(GetNativeValue(e), $0008CDEB, 
+        'Native Value: Should set the correct value');
+      RemoveElement(a, e);
+      e := nil;
+      
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(e) then
+          RemoveElement(a, e);
+        Fail(x);
+      end;
+    end;
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
