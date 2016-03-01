@@ -887,7 +887,7 @@ end;
 procedure TestArrayValueHelpers;
 var
   bCaughtException: Boolean;
-  f, rec, e: IInterface;
+  f, rec, a, e: IInterface;
 begin
   (** HasArrayValue **)
   Describe('HasArrayValue');
@@ -913,13 +913,13 @@ begin
     // assign some variables
     f := FileByName(mteTestFile1);
     rec := RecordByIndex(f, 1);
-    e := ElementByPath(rec, 'KWDA');
+    a := ElementByPath(rec, 'KWDA');
     
     Describe('Input value not assigned');
     try
       bCaughtException := false;
       try
-        HasArrayValue(e, nil);
+        HasArrayValue(a, nil);
       except 
         on x: Exception do begin
           bCaughtException := true;
@@ -935,11 +935,11 @@ begin
     
     Describe('Value present');
     try
-      Expect(HasArrayValue(e, 'VendorItemFood [KYWD:0008CDEA]'), 
+      Expect(HasArrayValue(a, 'VendorItemFood [KYWD:0008CDEA]'), 
         'Edit Value: Should return true');
-      Expect(HasArrayValue(e, $0008CDEA), 
+      Expect(HasArrayValue(a, $0008CDEA), 
         'Native Value: Should return true');
-      Expect(HasArrayValue(e, 'VendorItemFood'), 
+      Expect(HasArrayValue(a, 'VendorItemFood'), 
         'Editor ID: Should return true');
       Pass;
     except
@@ -948,11 +948,11 @@ begin
     
     Describe('Value not present');
     try
-      Expect(not HasArrayValue(e, 'VendorItemIngredient [KYWD:0008CDEB]'), 
+      Expect(not HasArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]'), 
         'Edit Value: Should return false');
-      Expect(not HasArrayValue(e, $0008CDEB), 
+      Expect(not HasArrayValue(a, $0008CDEB), 
         'Native Value: Should return false');
-      Expect(not HasArrayValue(e, 'VendorItemIngredient'), 
+      Expect(not HasArrayValue(a, 'VendorItemIngredient'), 
         'Editor ID: Should return false');
       Pass;
     except
@@ -960,13 +960,13 @@ begin
     end;
     
     // change element to struct array
-    e := ElementByPath(rec, 'Effects');
+    a := ElementByPath(rec, 'Effects');
     
     Describe('Used on struct array');
     try
       bCaughtException := false;
       try
-        HasArrayValue(e, 'Test');
+        GetArrayValue(a, 'Test');
       except 
         on x: Exception do begin
           bCaughtException := true;
