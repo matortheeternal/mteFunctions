@@ -1181,16 +1181,6 @@ begin
   except
     on x: Exception do Fail(x);
   end;
-  
-  (** DeleteArrayValue **)
-  {Describe('DeleteArrayValue');
-  try
-  
-    // all tests passed?
-    Pass;
-  except
-    on x: Exception do Fail(x);
-  end;}
 end;
 
 { 
@@ -1238,14 +1228,6 @@ begin
   except
     on x: Exception do Fail(x);
   end;
-  
-  {Describe('Array Struct Helpers');
-  try
-    TestArrayStructHelpers;
-    Pass;
-  except
-    on x: Exception do Fail(x);
-  end;}
 end;
 
 {******************************************************************************}

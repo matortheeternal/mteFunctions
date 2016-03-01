@@ -1064,7 +1064,7 @@ begin
   // add the element to the array
   Result := ElementAssign(a, HighInteger, nil, false);
   
-  // if element is not a value element, remove and exit
+  // if assigned element is not a value element, remove it and raise an exception
   if not IsValue(Result) then begin
     Remove(Result);
     Result := nil;
