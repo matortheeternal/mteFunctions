@@ -1181,6 +1181,100 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** DeleteArrayValue **)
+  Describe('DeleteArrayValue');
+  try
+    Describe('Input array not assigned');
+    try
+      bCaughtException := false;
+      try
+        DeleteArrayValue(nil, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'DeleteArrayValue: Input array not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // assign some variables
+    f := FileByName(mteTestFile1);
+    rec := RecordByIndex(f, 1);
+    a := ElementByPath(rec, 'KWDA');
+    
+    Describe('Input value not assigned');
+    try
+      bCaughtException := false;
+      try
+        DeleteArrayValue(a, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'DeleteArrayValue: Input value not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Valid value');
+    try
+      AddArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]');
+      DeleteArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]');
+      ExpectEqual(ElementCount(a), 1, 'Edit Value: Should delete the element');
+      
+      e := AddArrayValue(a, $0008CDEB);
+      DeleteArrayValue(a, $0008CDEB);
+      ExpectEqual(ElementCount(a), 1, 'Native Value: Should delete the element');
+      
+      AddArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]');
+      DeleteArrayValue(a, 'VendorItemIngredient');
+      ExpectEqual(ElementCount(a), 1, 'Editor ID: Should delete the element');
+      
+      Pass;
+    except
+      on x: Exception do begin
+        if Assigned(e) then
+          RemoveElement(a, e);
+        Fail(x);
+      end;
+    end;
+    
+    // change element to struct array
+    a := ElementByPath(rec, 'Effects');
+    
+    Describe('Used on struct array');
+    try
+      bCaughtException := false;
+      try
+        DeleteArrayValue(a, 'Test');
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'ElementMatches: Input element is not a value element', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
 end;
 
 { 
