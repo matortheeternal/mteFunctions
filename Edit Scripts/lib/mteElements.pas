@@ -987,8 +987,8 @@ begin
 end;
 
 {****************************************************}
-{ ARRAY ELEMENT METHODS
-  Generic methods for handling array elements.
+{ ARRAY VALUE METHODS
+  Generic methods for handling array value elements.
   
   List of functions:
   - HasArrayValue
@@ -1004,6 +1004,13 @@ var
   element: IInterface;
 begin
   Result := false;
+  
+  // throw exception if array is not given
+  if not Assigned(a) then
+    raise Exception.Create('HasArrayValue: Input array not assigned');
+  // throw exception if value is not given
+  if not Assigned(value) then
+    raise Exception.Create('HasArrayValue: Input value not assigned');
   
   // loop through array elements
   for i := 0 to Pred(ElementCount(a)) do begin
