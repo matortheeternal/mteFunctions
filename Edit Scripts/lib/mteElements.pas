@@ -1030,6 +1030,13 @@ var
 begin
   Result := nil;
   
+  // throw exception if array is not given
+  if not Assigned(a) then
+    raise Exception.Create('GetArrayValue: Input array not assigned');
+  // throw exception if value is not given
+  if not Assigned(value) then
+    raise Exception.Create('GetArrayValue: Input value not assigned');
+  
   // loop through array elements
   for i := 0 to Pred(ElementCount(a)) do begin
     element := ElementByIndex(a, i);
