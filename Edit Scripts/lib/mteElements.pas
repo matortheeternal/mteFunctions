@@ -1054,6 +1054,13 @@ var
 begin
   Result := nil;
   
+  // throw exception if array is not given
+  if not Assigned(a) then
+    raise Exception.Create('AddArrayValue: Input array not assigned');
+  // throw exception if value is not given
+  if not Assigned(value) then
+    raise Exception.Create('AddArrayValue: Input value not assigned');
+  
   // add the element to the array
   Result := ElementAssign(a, HighInteger, nil, false);
   
