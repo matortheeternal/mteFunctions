@@ -1064,6 +1064,13 @@ begin
   // add the element to the array
   Result := ElementAssign(a, HighInteger, nil, false);
   
+  // if element is not a value element, remove and exit
+  if not IsValue(Result) then begin
+    Remove(Result);
+    Result := nil;
+    raise Exception.Create('AddArrayValue: Array does not support value elements');
+  end;
+  
   // set value to new element
   vt := VarType(value);
   case vt of 

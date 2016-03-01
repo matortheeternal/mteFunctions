@@ -1154,12 +1154,43 @@ begin
         Fail(x);
       end;
     end;
+    
+    // change element to struct array
+    a := ElementByPath(rec, 'Effects');
+    
+    Describe('Used on struct array');
+    try
+      bCaughtException := false;
+      try
+        AddArrayValue(a, 'Test');
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'AddArrayValue: Array does not support value elements', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
   
     // all tests passed?
     Pass;
   except
     on x: Exception do Fail(x);
   end;
+  
+  (** DeleteArrayValue **)
+  {Describe('DeleteArrayValue');
+  try
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;}
 end;
 
 { 
@@ -1207,6 +1238,14 @@ begin
   except
     on x: Exception do Fail(x);
   end;
+  
+  {Describe('Array Struct Helpers');
+  try
+    TestArrayStructHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;}
 end;
 
 {******************************************************************************}
