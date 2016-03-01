@@ -884,6 +884,109 @@ begin
   end;
 end;
 
+procedure TestArrayValueHelpers;
+var
+  bCaughtException: Boolean;
+  f, rec, e: IInterface;
+begin
+  (** HasArrayValue **)
+  Describe('HasArrayValue');
+  try
+    Describe('Input array not assigned');
+    try
+      bCaughtException := false;
+      try
+        HasArrayValue(nil, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'HasArrayValue: Input array not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // assign some variables
+    f := FileByName(mteTestFile1);
+    rec := RecordByIndex(f, 1);
+    e := ElementByPath(rec, 'KWDA');
+    
+    Describe('Input value not assigned');
+    try
+      bCaughtException := false;
+      try
+        HasArrayValue(e, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'HasArrayValue: Input value not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Value present');
+    try
+      Expect(HasArrayValue(e, 'VendorItemFood [KYWD:0008CDEA]'), 
+        'Edit Value: Should return true');
+      Expect(HasArrayValue(e, $0008CDEA), 
+        'Native Value: Should return true');
+      Expect(HasArrayValue(e, 'VendorItemFood'), 
+        'Editor ID: Should return true');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Value not present');
+    try
+      Expect(not HasArrayValue(e, 'VendorItemIngredient [KYWD:0008CDEB]'), 
+        'Edit Value: Should return false');
+      Expect(not HasArrayValue(e, $0008CDEB), 
+        'Native Value: Should return false');
+      Expect(not HasArrayValue(e, 'VendorItemIngredient'), 
+        'Editor ID: Should return false');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // change element to struct array
+    e := ElementByPath(rec, 'Effects');
+    
+    Describe('Used on struct array');
+    try
+      bCaughtException := false;
+      try
+        HasArrayValue(e, 'Test');
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'ElementMatches: Input element is not a value element', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
+
 { 
   TestMteElements:
   Tests the functions in mteElements using the jvTest framework.
@@ -917,6 +1020,14 @@ begin
   Describe('Flag Helpers');
   try
     TestFlagHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Array Value Helpers');
+  try
+    TestArrayValueHelpers;
     Pass;
   except
     on x: Exception do Fail(x);
