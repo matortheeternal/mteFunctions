@@ -1088,6 +1088,13 @@ var
   i: Integer;
   element: IInterface;
 begin
+  // throw exception if array is not given
+  if not Assigned(a) then
+    raise Exception.Create('DeleteArrayValue: Input array not assigned');
+  // throw exception if value is not given
+  if not Assigned(value) then
+    raise Exception.Create('DeleteArrayValue: Input value not assigned');
+    
   // loop through array elements
   for i := Pred(ElementCount(a)) downto 0 do begin
     element := ElementByIndex(a, i);
