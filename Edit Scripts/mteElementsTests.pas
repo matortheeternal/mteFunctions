@@ -959,6 +959,106 @@ begin
       on x: Exception do Fail(x);
     end;
     
+    // change array element to a struct array
+    a := ElementByPath(rec, 'Effects');
+    
+    Describe('Used on struct array');
+    try
+      bCaughtException := false;
+      try
+        HasArrayValue(a, 'Test');
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'ElementMatches: Input element is not a value element', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (** GetArrayValue **)
+  Describe('GetArrayValue');
+  try
+    Describe('Input array not assigned');
+    try
+      bCaughtException := false;
+      try
+        GetArrayValue(nil, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'GetArrayValue: Input array not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    // assign some variables
+    f := FileByName(mteTestFile1);
+    rec := RecordByIndex(f, 1);
+    a := ElementByPath(rec, 'KWDA');
+    
+    Describe('Input value not assigned');
+    try
+      bCaughtException := false;
+      try
+        GetArrayValue(a, nil);
+      except 
+        on x: Exception do begin
+          bCaughtException := true;
+          ExpectEqual(x.Message, 'GetArrayValue: Input value not assigned', 
+            'Should raise the correct exception');
+        end;
+      end;
+      Expect(bCaughtException, 'Should have raised an exception');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Value present');
+    try
+      e := GetArrayValue(a, 'VendorItemFood [KYWD:0008CDEA]');
+      ExpectEqual(GetEditValue(e), 'VendorItemFood [KYWD:0008CDEA]',
+        'Edit Value: Should return the correct element');
+      e := GetArrayValue(a, $0008CDEA);
+      ExpectEqual(GetNativeValue(e), $0008CDEA, 
+        'Native Value: Should return the correct element');
+      e := GetArrayValue(a, 'VendorItemFood');
+      ExpectEqual(GetEditValue(e), 'VendorItemFood [KYWD:0008CDEA]',
+        'Editor ID: Should return the correct element');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
+    Describe('Value not present');
+    try
+      e := GetArrayValue(a, 'VendorItemIngredient [KYWD:0008CDEB]');
+      Expect(not Assigned(e), 'Edit Value: Should return nil');
+      e := GetArrayValue(a, $0008CDEB);
+      Expect(not Assigned(e), 'Native Value: Should return nil');
+      e := GetArrayValue(a, 'VendorItemIngredient');
+      Expect(not Assigned(e), 'Editor ID: Should return nil');
+      Pass;
+    except
+      on x: Exception do Fail(x);
+    end;
+    
     // change element to struct array
     a := ElementByPath(rec, 'Effects');
     
