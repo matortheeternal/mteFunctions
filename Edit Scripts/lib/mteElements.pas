@@ -45,6 +45,13 @@ var
   rec: IInterface;
 begin
   Result := False;
+  
+  // raise exception if input element is not a value element
+  if not IsValue(element) then
+    raise Exception.Create('ElementMatches: Input element is not a value element');
+  
+  vt := VarType(value);
+  
   case vt of 
     varInteger, varDouble, varShortInt:
       Result := (value = GetNativeValue(element));
