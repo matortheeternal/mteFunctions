@@ -1277,6 +1277,56 @@ begin
   end;
 end;
 
+procedure TestArrayStructHelpers;
+var
+  bCaughtException: Boolean;
+  f, rec, a, e: IInterface;
+begin
+  (** HasArrayStruct **)
+  Describe('HasArrayStruct');
+  try
+    // TODO
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end
+  
+  (** GetArrayStruct **)
+  Describe('GetArrayStruct');
+  try
+    // TODO
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (** AddArrayStruct **)
+  Describe('AddArrayStruct');
+  try
+    // TODO
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  (** DeleteArrayStruct **)
+  Describe('DeleteArrayStruct');
+  try
+    // TODO
+  
+    // all tests passed?
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+end;
+
 { 
   TestMteElements:
   Tests the functions in mteElements using the jvTest framework.
@@ -1318,6 +1368,14 @@ begin
   Describe('Array Value Helpers');
   try
     TestArrayValueHelpers;
+    Pass;
+  except
+    on x: Exception do Fail(x);
+  end;
+  
+  Describe('Array Struct Helpers');
+  try
+    TestArrayStructHelpers;
     Pass;
   except
     on x: Exception do Fail(x);
