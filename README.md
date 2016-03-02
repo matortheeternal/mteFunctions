@@ -15,7 +15,7 @@ mteFunctions has a full suite of tests, created using [jvTest](https://github.co
 | mteBase       | ![Progress](http://progressed.io/bar/100) |
 | mteFiles      | ![Progress](http://progressed.io/bar/95)  |
 | mteElements   | ![Progress](http://progressed.io/bar/90)  |
-| mteRecords    | ![Progress](http://progressed.io/bar/5)   |
+| mteRecords    | ![Progress](http://progressed.io/bar/10)   |
 | mteTypes      | ![Progress](http://progressed.io/bar/100) |
 | mteGUI        | ![Progress](http://progressed.io/bar/0)   |
 | mteSystem     | ![Progress](http://progressed.io/bar/5)   |
