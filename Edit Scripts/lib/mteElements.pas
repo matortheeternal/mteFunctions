@@ -19,7 +19,7 @@ const
 
 {****************************************************}
 { ELEMENT COMPARISON
-  Metohds for comparing or evaluating elements.
+  Methods for comparing or evaluating elements.
   - IsValue
   - ElementMatches
   - StructMatches
