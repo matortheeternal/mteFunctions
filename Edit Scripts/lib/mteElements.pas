@@ -51,7 +51,6 @@ begin
     raise Exception.Create('ElementMatches: Input element is not a value element');
   
   vt := VarType(value);
-  
   case vt of 
     varInteger, varDouble, varShortInt:
       Result := (value = GetNativeValue(element));
@@ -85,6 +84,10 @@ var
   key: String;
 begin
   Result := false;
+  
+  // raise exception if input element is not a struct element
+  if IsValue(element) then
+    raise Exception.Create('StructMatches: Input element is not a struct element');
   
   vt := VarType(value);
   // if path is empty, compare struct directly to value
